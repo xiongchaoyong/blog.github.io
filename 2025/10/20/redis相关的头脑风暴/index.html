@@ -1,0 +1,1398 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>redis | 朝永的博客</title><meta name="author" content="朝永"><meta name="copyright" content="朝永"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="redis">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis">
+<meta property="og:url" content="https://xiongchaoyong.github.io/2025/10/20/redis%E7%9B%B8%E5%85%B3%E7%9A%84%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/index.html">
+<meta property="og:site_name" content="朝永的博客">
+<meta property="og:description" content="redis">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiongchaoyong.github.io/img/5.png">
+<meta property="article:published_time" content="2025-10-20T06:55:00.000Z">
+<meta property="article:modified_time" content="2025-10-20T08:28:20.855Z">
+<meta property="article:author" content="朝永">
+<meta property="article:tag" content="redis">
+<meta property="article:tag" content="头脑风暴">
+<meta property="article:tag" content="思考">
+<meta property="article:tag" content="黑马">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiongchaoyong.github.io/img/5.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "redis",
+  "url": "https://xiongchaoyong.github.io/2025/10/20/redis%E7%9B%B8%E5%85%B3%E7%9A%84%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/",
+  "image": "https://xiongchaoyong.github.io/img/5.png",
+  "datePublished": "2025-10-20T06:55:00.000Z",
+  "dateModified": "2025-10-20T08:28:20.855Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "朝永",
+      "url": "https://xiongchaoyong.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xiongchaoyong.github.io/2025/10/20/redis%E7%9B%B8%E5%85%B3%E7%9A%84%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'redis',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.0.0"></head><body><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/5.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">朝永的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">redis</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"></div></nav><div id="post-info"><h1 class="post-title">redis</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-10-20T08:28:20.855Z" title="更新于 2025-10-20 16:28:20">2025-10-20</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/redis/">redis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><blockquote>
+<p>Redis 的“单线程”是什么意思</p>
+</blockquote>
+<p>好的，这是一个非常经典且重要的问题。我们来详细解释一下 Redis 的“单线程”是什么意思，以及它带来的好处和需要注意的地方。</p>
+<h3 id="Redis-单线程是什么意思？"><a href="#Redis-单线程是什么意思？" class="headerlink" title="Redis 单线程是什么意思？"></a>Redis 单线程是什么意思？</h3><p>首先，需要明确一个关键点：<strong>我们通常所说的“Redis 是单线程”，指的是其核心的网络 I&#x2F;O 和键值对读写是由一个线程来完成的。</strong></p>
+<p>这并不意味着 Redis 在整个软件层面都是单线程的。现代版本的 Redis 在后台会使用一些额外的线程来处理其他任务，例如：</p>
+<ul>
+<li><strong>持久化</strong>：在生成 RDB 快照或重写 AOF 日志时，会 fork 出子进程来完成（注意，是进程，不是线程）。在 AOF 的 <code>fsync</code> 等某些环节也可能使用线程。</li>
+<li><strong>异步删除</strong>：当你使用 <code>UNLINK</code> 命令删除一个大键，或者使用 <code>FLUSHDB ASYNC</code> &#x2F; <code>FLUSHALL ASYNC</code> 命令时，实际的内存回收会交给后台线程处理，以避免阻塞主线程。</li>
+<li><strong>其他模块任务</strong>：一些复杂的模块可能会使用自己的线程。</li>
+</ul>
+<p>所以，<strong>最准确的理解是：Redis 处理客户端请求的核心模块是单线程的。</strong> 这个主线程负责处理所有命令的接收、解析、执行和回复。</p>
+<hr>
+<h3 id="为什么采用单线程模型？有什么好处？"><a href="#为什么采用单线程模型？有什么好处？" class="headerlink" title="为什么采用单线程模型？有什么好处？"></a>为什么采用单线程模型？有什么好处？</h3><p>Redis 诞生之初，CPU 还远未像今天这样成为瓶颈，网络和内存的速度才是。在这种背景下，单线程模型带来了几个巨大的优势：</p>
+<h4 id="1-极高的性能和低延迟"><a href="#1-极高的性能和低延迟" class="headerlink" title="1. 极高的性能和低延迟"></a>1. 极高的性能和低延迟</h4><p>这听起来可能违反直觉（毕竟无法利用多核），但却是事实。原因在于：</p>
+<ul>
+<li><strong>避免了频繁的上下文切换</strong>：多线程模型下，CPU 需要花费大量时间在多个线程之间切换，保存和恢复线程的状态。这个过程本身就有开销。单线程模型下，一个线程独占 CPU，没有了上下文切换的开销。</li>
+<li><strong>避免了锁的竞争</strong>：这是最关键的一点。数据结构（如内存中的哈希表）的操作不需要加任何锁。因为只有一个线程在访问它们，所以不存在多线程同时修改数据导致的竞争问题。这就彻底消除了使用锁带来的性能损耗和死锁的复杂性。</li>
+</ul>
+<h4 id="2-简单可靠，易于维护"><a href="#2-简单可靠，易于维护" class="headerlink" title="2. 简单可靠，易于维护"></a>2. 简单可靠，易于维护</h4><ul>
+<li><strong>代码简单</strong>：单线程模型的代码实现起来比多线程简单得多。不需要去考虑各种复杂的并发控制问题，如锁、信号量、原子操作等。</li>
+<li><strong>调试容易</strong>：问题更容易复现和调试，因为执行顺序是确定的，不会出现多线程环境下那种“时有时无”的诡异 Bug。</li>
+</ul>
+<h4 id="3-天然的原子性操作"><a href="#3-天然的原子性操作" class="headerlink" title="3. 天然的原子性操作"></a>3. 天然的原子性操作</h4><p>由于所有命令都是按顺序执行的，<strong>单个命令的执行本身就是原子的</strong>。你不需要担心在执行 <code>INCR</code>、<code>HMSET</code> 等命令时被其他命令打断。这为很多场景提供了便利，比如简单的计数器、分布式锁等。</p>
+<hr>
+<h3 id="单线程模型的缺点"><a href="#单线程模型的缺点" class="headerlink" title="单线程模型的缺点"></a>单线程模型的缺点</h3><p>当然，单线程模型并非完美，它也有明显的短板：</p>
+<h4 id="1-无法充分利用多核-CPU"><a href="#1-无法充分利用多核-CPU" class="headerlink" title="1. 无法充分利用多核 CPU"></a>1. 无法充分利用多核 CPU</h4><p>这是最直接的缺点。在一个多核服务器上，一个 Redis 实例只能使用一个 CPU 核心。如果你希望充分利用服务器的 CPU 资源，就需要在同一台机器上部署多个 Redis 实例，形成集群。</p>
+<h4 id="2-容易受到慢查询的影响"><a href="#2-容易受到慢查询的影响" class="headerlink" title="2. 容易受到慢查询的影响"></a>2. 容易受到慢查询的影响</h4><p>因为所有命令都在一个线程中排队执行，所以<strong>如果某个命令执行得很慢（例如 <code>keys \*</code> 命令，或者一个包含大量元素的 <code>lrange</code> 命令），它就会阻塞后续所有命令</strong>，导致整个实例的响应时间变长。</p>
+<p><strong>注意</strong>：这里的“慢”不一定是指复杂度 O(n) 的命令，像 <code>DEL</code> 一个非常大的 Key 也可能因为内存回收而变慢。</p>
+<hr>
+<h3 id="Redis-6-0-之后的多线程网络-I-O"><a href="#Redis-6-0-之后的多线程网络-I-O" class="headerlink" title="Redis 6.0 之后的多线程网络 I&#x2F;O"></a>Redis 6.0 之后的多线程网络 I&#x2F;O</h3><p>为了弥补单线程在网络 I&#x2F;O 上的瓶颈，Redis 在 6.0 版本引入了<strong>多线程网络 I&#x2F;O</strong>。</p>
+<p><strong>请务必理解这个变化的本质：</strong></p>
+<ul>
+<li><strong>它处理的不是命令的执行，而是网络数据的读写</strong>。</li>
+<li>工作流程变为：<ol>
+<li><strong>主线程</strong>负责接收客户端连接，并将建立的 Socket 放入一个队列。</li>
+<li><strong>多个 I&#x2F;O 线程</strong>从队列中获取 Socket，并行地进行<strong>网络数据的读取和解析</strong>，然后将解析好的命令交给主线程。</li>
+<li><strong>主线程</strong>依然<strong>单线程地按顺序执行所有命令</strong>。</li>
+<li>命令执行完毕后，主线程将结果放入另一个队列。</li>
+<li><strong>多个 I&#x2F;O 线程</strong>再次并行地从队列中获取结果，并通过网络将数据<strong>发送回客户端</strong>。</li>
+</ol>
+</li>
+</ul>
+<p><strong>简单来说：命令执行还是单线程，但读数据和写数据变成了多线程。</strong></p>
+<p>这样做的好处是，在高并发场景下，可以极大地减轻主线程在网络 I&#x2F;O 上的压力，让主线程更专注于执行命令，从而提升整体性能。但它并没有改变“命令执行是单线程”这一核心原则。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>核心模型</strong></td>
+<td align="left">处理客户端命令的<strong>执行</strong>是单线程的。</td>
+</tr>
+<tr>
+<td align="left"><strong>主要好处</strong></td>
+<td align="left">1. <strong>高性能</strong>：无锁竞争，无上下文切换。 2. <strong>简单可靠</strong>：代码易于开发和维护。 3. <strong>原子性</strong>：单个命令天然具备原子性。</td>
+</tr>
+<tr>
+<td align="left"><strong>主要缺点</strong></td>
+<td align="left">1. <strong>CPU 利用率低</strong>：无法充分利用多核。 2. <strong>易受阻塞</strong>：一个慢查询会阻塞所有后续请求。</td>
+</tr>
+<tr>
+<td align="left"><strong>Redis 6.0+</strong></td>
+<td align="left">引入了<strong>多线程网络 I&#x2F;O</strong> 来提升网络读写性能，但<strong>命令执行的核心逻辑仍然是单线程</strong>。</td>
+</tr>
+</tbody></table>
+<p>因此，当你听说“Redis 是单线程”时，应该理解为其卓越的性能和简洁性正是源于这种独特的设计选择，它通过牺牲多核CPU的并行计算能力，换来了无锁竞争的极致效率。</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p>能先讲一讲什么是单线程，什么是多线程吗，以java和redis为例子</p>
+</blockquote>
+<p>好的，当然可以！我们先从基础概念讲起，再用 Java 和 Redis 的例子来具体说明，这样就会非常清晰。</p>
+<h3 id="核心概念：单线程-vs-多线程"><a href="#核心概念：单线程-vs-多线程" class="headerlink" title="核心概念：单线程 vs 多线程"></a>核心概念：单线程 vs 多线程</h3><p>想象一个场景：一个厨房里有一个厨师在做菜。</p>
+<h4 id="什么是单线程？"><a href="#什么是单线程？" class="headerlink" title="什么是单线程？"></a>什么是单线程？</h4><ul>
+<li><strong>只有一个厨师</strong>：从接订单、切菜、炒菜到装盘，所有工作都由这<strong>一个厨师</strong>按顺序完成。</li>
+<li><strong>工作方式</strong>：他必须做完第一道菜的所有步骤，才能开始做第二道菜。如果第一道菜需要炖很久，他也只能等着，不能去切第二道菜的菜。</li>
+<li><strong>特点</strong>：任务执行是<strong>顺序的</strong>，简单，但容易因一个耗时任务而“阻塞”整个流程。</li>
+</ul>
+<p><strong>单线程就是一个程序，它的所有任务都在一个唯一的“执行序列”（线程）中按顺序执行。</strong></p>
+<h4 id="什么是多线程？"><a href="#什么是多线程？" class="headerlink" title="什么是多线程？"></a>什么是多线程？</h4><ul>
+<li><strong>有多个厨师</strong>：一个主厨负责接订单，然后他把切菜的任务交给厨师A，炒菜的任务交给厨师B。</li>
+<li><strong>工作方式</strong>：当厨师B在炒第一道菜时，厨师A可以同时切第二道菜的菜。主厨则可以同时安排第三道菜。大家<strong>并行工作</strong>。</li>
+<li><strong>特点</strong>：能同时处理多个任务，效率高，能充分利用资源（多人协作）。但管理复杂，需要协调好厨师们的工作，比如不能两个厨师同时用同一把刀（这被称为 <strong>资源竞争</strong>），否则会出乱子。</li>
+</ul>
+<p><strong>多线程就是一个程序，它可以创建多个“执行序列”（线程），这些线程可以同时（或看起来同时）执行，共同完成任务。</strong></p>
+<hr>
+<h3 id="以-Java-为例（典型的多线程）"><a href="#以-Java-为例（典型的多线程）" class="headerlink" title="以 Java 为例（典型的多线程）"></a>以 Java 为例（典型的多线程）</h3><p>Java 被设计为可以方便地创建和管理多个线程。</p>
+<p><strong>举个例子：一个Web服务器</strong><br>假设你用Java写了一个服务器，需要同时处理来自很多个客户端的请求。</p>
+<ul>
+<li><strong>单线程做法（糟糕）</strong>：<ul>
+<li>服务器只有一个线程。它必须先完整处理完客户端A的请求（比如读取数据、计算、返回结果），然后才能开始处理客户端B的请求。如果A的请求很慢，B就只能干等着，用户体验极差。</li>
+</ul>
+</li>
+<li><strong>多线程做法（标准）</strong>：<ul>
+<li>当客户端A连接时，主线程会<strong>新建一个专门的线程A</strong>来处理A的请求。</li>
+<li>当客户端B连接时，主线程会<strong>再新建一个线程B</strong>来处理B的请求。</li>
+<li>现在，线程A和线程B<strong>可以同时运行</strong>在CPU的不同核心上。处理A的请求不会影响B的响应速度。</li>
+<li>这就实现了<strong>高并发</strong>。</li>
+</ul>
+</li>
+</ul>
+<p><strong>Java多线程的挑战：</strong><br>由于线程间共享内存，如果多个线程同时修改一个变量（比如一个计数器），就会发生混乱。</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">// 例子：两个线程同时给 count 加 1，我们希望最终是 2</span><br><span class="line">public class Counter &#123;</span><br><span class="line">    private int count = 0;</span><br><span class="line">    public void add() &#123;</span><br><span class="line">        count++; // 这行代码不是原子操作</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>count++</code> 实际上分为三步：1. 读取count值；2. 给值加1；3. 写回新值。如果两个线程交错执行这三步，最终结果可能是1而不是2。</p>
+<p><strong>解决方案</strong>：Java 提供了 <code>synchronized</code> 关键字、<code>Lock</code> 等各种<strong>锁</strong>机制来保证同一时间只有一个线程能执行关键代码。但这带来了<strong>复杂性</strong>和<strong>性能开销</strong>（获取锁、释放锁、线程等待）。</p>
+<p><strong>小结Java</strong>：<strong>Java利用多线程来同时做多件事，以提高性能和并发能力，但代价是需要处理复杂的线程安全和锁问题。</strong></p>
+<hr>
+<h3 id="以-Redis-为例（特殊的单线程）"><a href="#以-Redis-为例（特殊的单线程）" class="headerlink" title="以 Redis 为例（特殊的单线程）"></a>以 Redis 为例（特殊的单线程）</h3><p>Redis 的处理客户端请求的<strong>核心部分</strong>是单线程的。</p>
+<p><strong>举个例子：一个存储数据的服务</strong><br>Redis 就像一个超级快的、只有一个服务窗口的银行柜台。</p>
+<ul>
+<li><strong>它的工作方式</strong>：<ul>
+<li>只有一个柜员（主线程）。</li>
+<li>所有客户（客户端请求）都必须在这个唯一的窗口排队。</li>
+<li>柜员严格按照<strong>先来后到的顺序</strong>处理每个客户的业务，办完一个再办下一个。</li>
+</ul>
+</li>
+</ul>
+<p><strong>你可能会问：这样不会慢吗？</strong><br>在大多数情况下，不仅不慢，反而<strong>更快</strong>！原因如下：</p>
+<ol>
+<li><strong>业务极其简单快速</strong>：Redis 的业务不是复杂的“办理贷款”，而是像“存一分钱”、“取一分钱”这种极其快速的操作（内存读写，速度是纳秒级）。一个CPU核心一秒钟能处理几十万甚至上百万次这种简单操作。</li>
+<li><strong>避免了管理的开销</strong>：<ul>
+<li><strong>无上下文切换</strong>：不需要在多个“柜员”之间来回切换，CPU时间完全用于干活。</li>
+<li><strong>完全不用排队和协调</strong>：因为只有一个柜员，所以不存在“多个柜员抢同一把钞票”的问题。在Java中需要小心保护的“数据”（如哈希表、链表），在Redis里完全不需要加锁，因为永远只有一个线程在访问它们。<strong>这是单线程模型带来的最大优势——无锁竞争。</strong></li>
+</ul>
+</li>
+<li><strong>顺序性保证</strong>：由于所有命令是顺序执行的，所以 <code>SET name John</code> 后紧接着 <code>GET name</code>，你一定能拿到 <code>John</code>，这个顺序是确定的。</li>
+</ol>
+<p><strong>Redis单线程的短板：</strong></p>
+<ul>
+<li><strong>一个慢操作会阻塞所有</strong>：如果某个客户非要办理一个很慢的业务（比如 <code>keys *</code> 命令，查询所有键），那么他后面的所有人都得等着。</li>
+<li><strong>无法发挥多核CPU优势</strong>：8核的服务器，Redis只能用到其中1核。</li>
+</ul>
+<p><strong>为了弥补短板，Redis 6.0 做了优化</strong>：<br>它引入了<strong>多线程网络I&#x2F;O</strong>。可以理解为：</p>
+<blockquote>
+<p>还是只有一个柜员（主线程）负责办业务，但他雇了几个<strong>跑腿小哥（I&#x2F;O线程）</strong>。小哥们负责帮排队的人填好单子（读取网络请求、解析协议），然后把单子递给柜员。柜员办完业务后，再把结果给小哥，由小哥送还给客户。</p>
+</blockquote>
+<p>这样，柜员就能更专注于核心业务，效率更高了，但<strong>处理业务本身（执行命令）仍然是单线程的</strong>。</p>
+<h3 id="总结对比"><a href="#总结对比" class="headerlink" title="总结对比"></a>总结对比</h3><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">Java (多线程)</th>
+<th align="left">Redis (核心单线程)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>工作模式</strong></td>
+<td align="left">创建多个线程同时处理任务。</td>
+<td align="left">单个线程按顺序处理所有命令。</td>
+</tr>
+<tr>
+<td align="left"><strong>设计目标</strong></td>
+<td align="left">充分利用多核CPU，提高吞吐量，处理复杂、耗时的计算任务。</td>
+<td align="left">极致性能，处理海量、简单的瞬时请求。</td>
+</tr>
+<tr>
+<td align="left"><strong>优势</strong></td>
+<td align="left">并发能力强，适合CPU密集型任务。</td>
+<td align="left">无锁竞争，无上下文切换，代码简单，性能极高。</td>
+</tr>
+<tr>
+<td align="left"><strong>挑战&#x2F;劣势</strong></td>
+<td align="left">复杂的线程安全、锁竞争、死锁问题。</td>
+<td align="left">不擅长CPU密集型任务，慢查询会阻塞全体。</td>
+</tr>
+<tr>
+<td align="left"><strong>好比</strong></td>
+<td align="left">多车道高速公路，车多但管理复杂。</td>
+<td align="left">单车道F1赛道，只为最快速度通过而设计。</td>
+</tr>
+</tbody></table>
+<p>希望这个解释能帮助你彻底理解单线程和多线程的区别！</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p>原子操作是什么，怎么判断是不是原子操作呢，为什么count++不是原子操作呢，不是只有一行代码吗</p>
+</blockquote>
+<p>非常好的问题！这些是理解并发编程最核心的概念。我们来一步步拆解。</p>
+<h3 id="1-原子操作是什么？"><a href="#1-原子操作是什么？" class="headerlink" title="1. 原子操作是什么？"></a>1. 原子操作是什么？</h3><p><strong>原子</strong>这个词来源于希腊语，意思是“不可分割的”。在编程中，一个原子操作指的是：</p>
+<p><strong>一个或多个操作要么完全执行并且执行过程不会被任何因素打断，要么就完全不执行，不存在执行到一半的中间状态。</strong></p>
+<p><strong>一个经典的比喻：银行转账</strong><br>假设你要从A账户转100元到B账户，这需要两个步骤：</p>
+<ol>
+<li>A账户扣除100元</li>
+<li>B账户增加100元</li>
+</ol>
+<p>如果这个操作<strong>不是原子</strong>的，可能在执行完步骤1后，系统卡住了，步骤2没有执行。结果就是A的钱没了，B的钱没收到，钱“不翼而飞”了。</p>
+<p>如果这个操作是<strong>原子</strong>的，那么步骤1和步骤2就是一个不可分割的整体。要么两个步骤都成功完成（转账成功），要么两个步骤都不执行（转账失败，A和B的钱都保持原样）。绝对不会出现“执行了一半”的中间状态。</p>
+<hr>
+<h3 id="2-怎么判断一个操作是不是原子操作？"><a href="#2-怎么判断一个操作是不是原子操作？" class="headerlink" title="2. 怎么判断一个操作是不是原子操作？"></a>2. 怎么判断一个操作是不是原子操作？</h3><p>判断一个操作是否是原子操作，主要看它的<strong>最小执行单元</strong>。这通常取决于两个层面：</p>
+<ol>
+<li><strong>编程语言层面</strong>：一行代码在高级语言（如Java, Python）中，通常不等于一个CPU指令。</li>
+<li><strong>CPU指令层面</strong>：真正的原子性通常由<strong>单个CPU指令</strong>来保证。如果一个操作在编译后对应多条CPU指令，那么它几乎肯定不是原子的，因为操作系统可能会在任意两条指令之间进行线程调度（上下文切换）。</li>
+</ol>
+<p><strong>一个简单的判断思路：</strong></p>
+<ul>
+<li><strong>基本数据类型的简单读写</strong>（在32位及以上的机器上）通常是原子的。例如，在Java中，<code>int</code>、<code>boolean</code> 等类型的赋值和读取是原子的（但注意 <code>long</code> 和 <code>double</code> 在32位JVM上可能不是）。</li>
+<li><strong>任何涉及“读取-修改-写入”多个步骤的操作</strong>，几乎都不是原子的。<code>count++</code> 就是最典型的例子。</li>
+<li><strong>依赖于运行时环境</strong>：一个操作在单核CPU上可能是“原子”的（因为线程切换后指令可能还是连续执行完），但在多核CPU上绝对不是。我们讨论原子性，默认是指在<strong>多线程并发</strong>环境下的行为。</li>
+</ul>
+<hr>
+<h3 id="3-为什么-count-不是原子操作？"><a href="#3-为什么-count-不是原子操作？" class="headerlink" title="3. 为什么 count++ 不是原子操作？"></a>3. 为什么 <code>count++</code> 不是原子操作？</h3><p>这正是问题的关键！虽然 <code>count++</code> 在Java等语言中只有一行代码，但这一行代码在被编译成CPU可以执行的<strong>机器指令</strong>时，对应的是<strong>三个独立的步骤</strong>。</p>
+<p>我们来分解 <code>count++</code> （或 <code>count = count + 1</code>）这个操作：</p>
+<ol>
+<li><strong>READ（读取）</strong>：从主内存中读取 <code>count</code> 的当前值到CPU的寄存器中。</li>
+<li><strong>MODIFY（修改）</strong>：在CPU的寄存器中，将读取到的值加1。</li>
+<li><strong>WRITE（写入）</strong>：将寄存器中的新值写回主内存，覆盖掉原来的 <code>count</code> 值。</li>
+</ol>
+<p>现在，我们考虑有两个线程（线程A和线程B）同时执行 <code>count++</code>，初始值 <code>count = 0</code>。</p>
+<p><strong>一种可能的错误执行时序：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">时间点</th>
+<th align="left">线程A</th>
+<th align="left">线程B</th>
+<th align="left">count的值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">t1</td>
+<td align="left"><strong>读取</strong> count (值&#x3D;0) 到寄存器</td>
+<td align="left"></td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">t2</td>
+<td align="left">在寄存器中<strong>计算</strong> 0+1 (&#x3D;1)</td>
+<td align="left"></td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">t3</td>
+<td align="left"></td>
+<td align="left"><strong>读取</strong> count (值<strong>仍然为0</strong>) 到寄存器</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">t4</td>
+<td align="left"></td>
+<td align="left">在寄存器中<strong>计算</strong> 0+1 (&#x3D;1)</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">t5</td>
+<td align="left"><strong>写入</strong> 新值1 到内存</td>
+<td align="left"></td>
+<td align="left"><strong>1</strong></td>
+</tr>
+<tr>
+<td align="left">t6</td>
+<td align="left"></td>
+<td align="left"><strong>写入</strong> 新值1 到内存</td>
+<td align="left"><strong>1</strong></td>
+</tr>
+</tbody></table>
+<p><strong>最终结果：</strong> <code>count = 1</code></p>
+<p>看到了吗？两个线程各自执行了一次 <code>count++</code>，我们期望的结果是2，但最终结果却是1。因为线程B在线程A<strong>还没来得及把新值写回去</strong>的时候，就读取了旧的<code>count</code>值。</p>
+<p><strong>图解说明：</strong></p>
+<p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">线程A: [读 0] -&gt; [算 0+1] -&gt; [写 1]</span><br><span class="line">线程B:         [读 0] -&gt; [算 0+1] -&gt; [写 1] </span><br></pre></td></tr></table></figure>
+
+
+
+<p>两个线程的“读取”操作发生了交叉，导致了数据覆盖。</p>
+<h3 id="如何让-count-变成原子操作？"><a href="#如何让-count-变成原子操作？" class="headerlink" title="如何让 count++ 变成原子操作？"></a>如何让 <code>count++</code> 变成原子操作？</h3><p>既然问题在于三个步骤被打断了，那么解决方案就是<strong>把这三个步骤“捆绑”在一起，使其成为一个不可分割的原子操作</strong>。</p>
+<p>在Java中，有几种方式可以实现：</p>
+<ol>
+<li><p><strong>使用 <code>synchronized</code> 关键字（悲观锁）</strong></p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class Counter &#123;</span><br><span class="line">    private int count = 0;</span><br><span class="line">    public synchronized void add() &#123; // 同一时间只有一个线程能进入此方法</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>它通过加锁来保证原子性，但性能开销较大。</p>
+</li>
+<li><p><strong>使用 <code>java.util.concurrent.atomic</code> 包下的原子类（乐观锁&#x2F;CAS）</strong></p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">import java.util.concurrent.atomic.AtomicInteger;</span><br><span class="line"></span><br><span class="line">public class Counter &#123;</span><br><span class="line">    private AtomicInteger count = new AtomicInteger(0);</span><br><span class="line">    public void add() &#123;</span><br><span class="line">        count.incrementAndGet(); // 这个操作是原子的</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>AtomicInteger</code> 的 <code>incrementAndGet()</code> 方法在底层利用了CPU提供的<strong>CAS（Compare-And-Swap）指令</strong>，这是一个真正的<strong>硬件级别的原子操作</strong>，它能在一条指令中完成“比较并交换”，因此效率比 <code>synchronized</code> 高很多。</p>
+</li>
+</ol>
+<h3 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h3><ul>
+<li><strong>原子操作</strong>：不可分割的操作，要么全做，要么全不做，没有中间状态。</li>
+<li><strong>判断依据</strong>：看其底层是否由<strong>单条CPU指令</strong>完成。涉及“读-改-写”模式的操作通常都不是原子的。</li>
+<li><strong><code>count++</code> 非原子</strong>：因为它对应<strong>读取</strong>、<strong>修改</strong>、<strong>写入</strong>三条CPU指令，在多线程环境下，这三个步骤可能被其他线程打断和干扰。</li>
+<li><strong>实现原子性</strong>：可以通过<strong>锁（如 <code>synchronized</code>）</strong> 或 <strong>硬件原语（如CAS）</strong> 来将非原子操作“包装”成原子操作。</li>
+</ul>
+<blockquote>
+<p>[!NOTE]</p>
+<p>那就是说原子心一般是在并发条件下才讨论的， radius是单线程，那release中就不用讨论原子性是吗</p>
+</blockquote>
+<p>您这个问题问得非常精准，直击核心！您的理解基本正确，但需要做一些重要的澄清和补充。</p>
+<h3 id="核心答案"><a href="#核心答案" class="headerlink" title="核心答案"></a>核心答案</h3><p><strong>是的，您说得对：原子性主要是在并发条件下才需要讨论的问题。由于 Redis 的核心命令执行是单线程的，所以对于 Redis 的客户端命令来说，我们通常不需要担心传统意义上的“原子性”问题。</strong></p>
+<p>但这背后有更深层次的原因和重要的边界情况。</p>
+<hr>
+<h3 id="详细解释"><a href="#详细解释" class="headerlink" title="详细解释"></a>详细解释</h3><h4 id="1-为什么-Redis-单线程模型下“天然”具备原子性？"><a href="#1-为什么-Redis-单线程模型下“天然”具备原子性？" class="headerlink" title="1. 为什么 Redis 单线程模型下“天然”具备原子性？"></a>1. 为什么 Redis 单线程模型下“天然”具备原子性？</h4><p>想象一下银行只有一个柜员（Redis 主线程）。所有客户（客户端请求）都必须排成一队。</p>
+<ul>
+<li><strong>顺序执行</strong>：柜员严格按照排队顺序，一次只处理一个客户的业务。</li>
+<li><strong>不会被打断</strong>：在处理客户A的 <code>SET key value</code> 业务时，绝对不会突然停下来去处理客户B的 <code>GET another_key</code> 业务。</li>
+<li><strong>状态确定</strong>：当客户A的业务处理完毕时，数据库的状态（所有键值对）处于一个完全确定的状态，然后才会开始处理下一个业务。</li>
+</ul>
+<p>因此，<strong>在 Redis 中，每一个命令本身的执行都是原子的</strong>。一个命令在执行过程中不会被其他命令插入或干扰。</p>
+<h4 id="2-Redis-中“原子性”的特殊含义"><a href="#2-Redis-中“原子性”的特殊含义" class="headerlink" title="2. Redis 中“原子性”的特殊含义"></a>2. Redis 中“原子性”的特殊含义</h4><p>在 Redis 的语境下，当我们说“原子性”时，通常指的是一个更广义的概念：</p>
+<p><strong>单个命令是原子的，而多个命令的组合则需要特殊机制来保证原子性。</strong></p>
+<ul>
+<li><p><strong>单个命令的原子性</strong>：</p>
+<ul>
+<li><code>SET key value</code> 是原子的。</li>
+<li><code>HSET myhash field value</code> 是原子的。</li>
+<li><code>INCR counter</code> 是原子的（这正是因为单线程，它天然避免了我们在 Java 中看到的 <code>count++</code> 问题）。</li>
+<li>即使像 <code>LPUSH mylist value</code> 这种操作复杂数据结构的命令，也是原子的。</li>
+</ul>
+</li>
+<li><p><strong>多个命令的“原子性”需求</strong>：<br>问题出现在你想把几个命令作为一个不可分割的整体来执行时。例如，你想先 <code>GET</code> 一个值，然后根据这个值做计算，再 <code>SET</code> 一个新值。</p>
+<p>bash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 这不是一个原子操作！</span><br><span class="line">value = GET counter</span><br><span class="line">new_value = value + 1</span><br><span class="line">SET counter new_value</span><br></pre></td></tr></table></figure>
+
+
+
+<p>在传统的多线程数据库里，这三个步骤中间可能会被其他线程打断。在 Redis 里，虽然它们不会被其他客户端的命令打断（因为单线程），但如果你用了 Redis 事务，在 <code>MULTI</code> 和 <code>EXEC</code> 之间，这些命令只是被排队，并没有真正执行。真正的“原子性”体现在 <code>EXEC</code> 命令时，它会让排队的所有命令<strong>连续执行，期间不会处理任何其他客户端的请求</strong>。</p>
+<p><strong>Redis 保证的是：事务中的命令集合在执行时是连续的、不被中断的。</strong> 但这和数据库的 ACID 原子性（要么全做，要么全不做）仍有细微差别（例如，Redis 事务中某条命令失败，后面的命令依然会执行）。</p>
+</li>
+</ul>
+<h4 id="3-Redis-中需要讨论“原子性”的边界情况"><a href="#3-Redis-中需要讨论“原子性”的边界情况" class="headerlink" title="3. Redis 中需要讨论“原子性”的边界情况"></a>3. Redis 中需要讨论“原子性”的边界情况</h4><p>您的问题中“就不用讨论原子性”的结论，在绝大多数情况下是正确的，但有几个重要的边界：</p>
+<ol>
+<li><p><strong>Lua 脚本</strong>：<br>Redis 为了解决多命令原子性问题，提供了 Lua 脚本功能。<strong>整个 Lua 脚本在执行时是被当作一个原子操作来对待的</strong>。Redis 会保证脚本在执行期间不会被任何其他命令打断。这是 Redis 中最接近“数据库事务原子性”的概念。</p>
+<p>lua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- 这个整个脚本是原子的</span><br><span class="line">local value = redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="line">local new_value = value + 1</span><br><span class="line">redis.call(&#x27;SET&#x27;, KEYS[1], new_value)</span><br><span class="line">return new_value</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>持久化（AOF）中的“原子性”</strong>：<br>当讨论数据可靠性时，我们会关注持久化。Redis 的 AOF 持久化方式，在配置为 <code>appendfsync always</code>时，会在每个命令后同步刷盘，这可以保证即使宕机，每个命令要么完全持久化，要么没有，从持久化层面维护了命令的原子性。</p>
+</li>
+<li><p><strong>集群环境</strong>：<br>在 Redis Cluster 模式下，一个事务或 Lua 脚本中的所有键必须在同一个哈希槽（hash slot）上。因为不同的槽可能位于不同的主节点上，跨节点的操作无法保证原子性。</p>
+</li>
+</ol>
+<h3 id="总结对比-1"><a href="#总结对比-1" class="headerlink" title="总结对比"></a>总结对比</h3><table>
+<thead>
+<tr>
+<th align="left">场景</th>
+<th align="left">是否需要讨论原子性？</th>
+<th align="left">原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Redis 单个命令</strong></td>
+<td align="left"><strong>基本不需要</strong></td>
+<td align="left">单线程模型天然保证，一个命令执行中不会被其他命令打断。</td>
+</tr>
+<tr>
+<td align="left"><strong>Redis 多个命令组合</strong></td>
+<td align="left"><strong>需要</strong></td>
+<td align="left">需要使用 <code>MULTI/EXEC</code> 事务或 <strong>Lua 脚本</strong> 来保证这一组命令连续、不被中断地执行。</td>
+</tr>
+<tr>
+<td align="left"><strong>Java&#x2F;Python 等多线程程序</strong></td>
+<td align="left"><strong>极度需要</strong></td>
+<td align="left">多线程会交叉访问共享数据，必须通过锁或原子类来保证 <code>count++</code>这类操作的原子性。</td>
+</tr>
+</tbody></table>
+<p><strong>所以，您的直觉是正确的：</strong> 由于 Redis 的核心是单线程，它巧妙地<strong>规避了</strong>我们在通用编程语言（如Java）中遇到的最棘手的那类并发原子性问题（如 <code>count++</code> 的数据竞争）。我们只是在更高层级上（命令组合、持久化、集群）去讨论和保证“原子性”语义。</p>
+<p>这是一个非常深刻的洞察！</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p>那可以理解re dis中的一个命令就是一个线程吗？</p>
+</blockquote>
+<p>不，不能这样理解。这是一个非常常见的误解，但<strong>恰恰相反</strong>。</p>
+<p>更准确的说法是：</p>
+<p><strong>Redis 中所有的命令都运行在同一个线程（主线程）中。</strong></p>
+<p>我们可以用一个比喻来清晰地理解：</p>
+<h3 id="比喻：银行柜台"><a href="#比喻：银行柜台" class="headerlink" title="比喻：银行柜台"></a>比喻：银行柜台</h3><ul>
+<li><strong>Redis 服务器</strong> &#x3D; <strong>一家银行</strong></li>
+<li><strong>Redis 的主线程</strong> &#x3D; <strong>银行里唯一的一个柜员</strong></li>
+<li><strong>一个客户端命令</strong>（如 <code>SET</code>, <code>GET</code>, <code>INCR</code>）&#x3D; <strong>一个客户要办理的一项业务</strong>（比如存钱、取钱、查询余额）</li>
+<li><strong>客户端并发请求</strong> &#x3D; <strong>很多客户同时来银行办理业务</strong></li>
+</ul>
+<h3 id="工作流程是这样的："><a href="#工作流程是这样的：" class="headerlink" title="工作流程是这样的："></a>工作流程是这样的：</h3><ol>
+<li><strong>排队</strong>：所有客户（命令）来了之后，都在同一个取号机（Redis 的 I&#x2F;O 多路复用器）前取号排队。</li>
+<li><strong>叫号处理</strong>：那个唯一的柜员（主线程）按照排队的顺序，一次叫一个号。</li>
+<li><strong>办理业务</strong>：柜员为当前这位客户<strong>完整地</strong>办理完他的业务（执行完整个 <code>SET</code> 或 <code>GET</code> 命令）。</li>
+<li><strong>下一位</strong>：只有当一个业务彻底办完后，柜员才会叫下一个号，处理下一个客户的业务。</li>
+</ol>
+<p><strong>所以，是“一个线程处理了成千上万个命令”，而不是“一个命令对应一个线程”。</strong></p>
+<hr>
+<h3 id="为什么不能是“一个命令一个线程”？"><a href="#为什么不能是“一个命令一个线程”？" class="headerlink" title="为什么不能是“一个命令一个线程”？"></a>为什么不能是“一个命令一个线程”？</h3><p>如果采用“一个命令一个线程”的模型（即像 Java Web 服务器那样的多线程模型），会带来我们之前讨论过的、Redis 设计初衷就是要<strong>避免</strong>的问题：</p>
+<ol>
+<li><strong>巨大的开销</strong>：创建和销毁线程需要消耗 CPU 和内存资源。对于 Redis 这种追求微秒级延迟的服务，这种开销是不可接受的。</li>
+<li><strong>上下文切换开销</strong>：当有成千上万个线程时，CPU 需要花费大量时间在保存和恢复线程状态上，而不是真正地执行命令。</li>
+<li><strong>锁竞争</strong>：这是最致命的一点。如果多个线程同时操作 Redis 的内存数据结构（比如同一个哈希表），就必须引入复杂的锁机制来保证数据安全。获取锁、释放锁、线程等待锁，这些操作会极大地拖慢 Redis 的速度，使其丧失高性能的优势。</li>
+</ol>
+<h3 id="Redis-6-0-之后的多线程是怎么回事？"><a href="#Redis-6-0-之后的多线程是怎么回事？" class="headerlink" title="Redis 6.0 之后的多线程是怎么回事？"></a>Redis 6.0 之后的多线程是怎么回事？</h3><p>Redis 6.0 引入的多线程，并不是让命令的执行变成多线程。它只是雇了几个 <strong>“跑腿小哥”（I&#x2F;O 线程）</strong> 来帮那个唯一的 <strong>“柜员”（主线程）</strong> 做一些准备工作。</p>
+<p><strong>新的工作流程：</strong></p>
+<ol>
+<li><strong>跑腿小哥接活</strong>：多个 I&#x2F;O 线程负责从网络连接上读取客户端的请求数据，并将其解析成 Redis 能理解的命令格式。</li>
+<li><strong>柜员专注核心业务</strong>：解析好的命令被交给那个唯一的柜员（主线程）。柜员依然<strong>单线程地、按顺序地</strong>执行这些命令。</li>
+<li><strong>跑腿小哥送结果</strong>：命令执行完毕后，I&#x2F;O 线程再负责将结果通过网络发送回客户端。</li>
+</ol>
+<p><strong>核心始终未变：命令的解析、执行、返回结果这个核心逻辑，依然是由主线程单线程完成的。</strong> 多线程只是用来分担耗时的网络数据读写任务，从而在高并发场景下让主线程更高效。</p>
+<h3 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h3><table>
+<thead>
+<tr>
+<th align="left">你的理解</th>
+<th align="left">正确的理解</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">一个命令就是一个线程</td>
+<td align="left"><strong>所有命令都在同一个线程中顺序执行</strong></td>
+</tr>
+<tr>
+<td align="left">Redis 内部是多线程的</td>
+<td align="left">Redis <strong>核心命令执行</strong>是单线程的，仅<strong>网络I&#x2F;O</strong>是多线程的</td>
+</tr>
+<tr>
+<td align="left">命令是并行执行的</td>
+<td align="left">命令是<strong>串行执行</strong>的，一个接一个</td>
+</tr>
+</tbody></table>
+<p>所以，请牢记：<strong>Redis 的核心是一个单线程的事件循环处理器，它依次处理所有到来的命令。</strong> 这正是它能够如此快速和简单的原因。</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p># 这不是一个原子操作！ value &#x3D; GET counter new_value &#x3D; value + 1 SET counter new_value为什么会不安全呢，肯定会按照顺序执行的呀。还有一个问题，lua脚本收尾了解决什么的，为什么我看见释放锁的时候也需要用lua，但是redis命令只有一条，</p>
+</blockquote>
+<p>您提出了两个非常棒的问题，它们恰好揭示了Redis并发编程中两个不同层面的核心问题。我们来逐一深入拆解。</p>
+<h3 id="问题一：为什么-GET-计算-SET-不安全？不是顺序执行吗？"><a href="#问题一：为什么-GET-计算-SET-不安全？不是顺序执行吗？" class="headerlink" title="问题一：为什么 GET -&gt; 计算 -&gt; SET 不安全？不是顺序执行吗？"></a>问题一：为什么 <code>GET -&gt; 计算 -&gt; SET</code> 不安全？不是顺序执行吗？</h3><p>您说得对，在Redis<strong>服务器内部</strong>，这些命令确实是顺序执行的。不安全的原因并非来自Redis服务器内部，而是来自<strong>多个客户端之间的并发操作</strong>。</p>
+<p><strong>核心问题：Redis的单线程保证了服务器内部的原子性，但无法保证客户端业务的原子性。</strong></p>
+<p>让我们回到银行的比喻：</p>
+<ul>
+<li><strong>Redis服务器</strong> &#x3D; 银行（只有一个柜员）</li>
+<li><strong>客户端A</strong> &#x3D; 客户A</li>
+<li><strong>客户端B</strong> &#x3D; 客户B</li>
+</ul>
+<p>现在，两个客户<strong>同时</strong>想要办理“查看余额并存入相同数额”的业务。</p>
+<p><strong>危险的执行时序：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">时间</th>
+<th align="left">客户端A</th>
+<th align="left">Redis服务器</th>
+<th align="left">客户端B</th>
+<th align="left">Counter值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">t1</td>
+<td align="left">发送 <code>GET counter</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t2</td>
+<td align="left"></td>
+<td align="left">执行 <code>GET counter</code>，返回10</td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t3</td>
+<td align="left">收到10，计算10+1&#x3D;11</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t4</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">发送 <code>GET counter</code></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t5</td>
+<td align="left"></td>
+<td align="left">执行 <code>GET counter</code>，返回10</td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t6</td>
+<td align="left">发送 <code>SET counter 11</code></td>
+<td align="left"></td>
+<td align="left">收到10，计算10+1&#x3D;11</td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t7</td>
+<td align="left"></td>
+<td align="left">执行 <code>SET counter 11</code></td>
+<td align="left"></td>
+<td align="left"><strong>11</strong></td>
+</tr>
+<tr>
+<td align="left">t8</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">发送 <code>SET counter 11</code></td>
+<td align="left">11</td>
+</tr>
+<tr>
+<td align="left">t9</td>
+<td align="left"></td>
+<td align="left">执行 <code>SET counter 11</code></td>
+<td align="left"></td>
+<td align="left"><strong>11</strong></td>
+</tr>
+</tbody></table>
+<p><strong>最终结果：</strong> <code>counter = 11</code></p>
+<p><strong>发生了什么？</strong><br>两个客户端都读取了旧值（10），然后都基于旧值计算出了新值（11），并依次写回。客户端B的操作<strong>覆盖</strong>了客户端A的操作。两次增加1的操作，最终结果只体现了一次。</p>
+<p><strong>结论：</strong> 虽然Redis内部是单线程，按顺序处理了 <code>A-GET</code> -&gt; <code>B-GET</code> -&gt; <code>A-SET</code> -&gt; <code>B-SET</code>，但“读取-修改-写入”这个<strong>业务逻辑</strong>在多个客户端并发执行时被破坏了。这被称为 <strong>丢失更新</strong> 问题。</p>
+<hr>
+<h3 id="问题二：Lua脚本解决了什么？为什么释放锁也需要用Lua？"><a href="#问题二：Lua脚本解决了什么？为什么释放锁也需要用Lua？" class="headerlink" title="问题二：Lua脚本解决了什么？为什么释放锁也需要用Lua？"></a>问题二：Lua脚本解决了什么？为什么释放锁也需要用Lua？</h3><p>Lua脚本正是为了解决上述问题而生的。</p>
+<h4 id="Lua脚本解决了什么？"><a href="#Lua脚本解决了什么？" class="headerlink" title="Lua脚本解决了什么？"></a>Lua脚本解决了什么？</h4><p><strong>Lua脚本将多个Redis命令组合成一个不可分割的原子操作。</strong></p>
+<p>当Redis执行一个Lua脚本时：</p>
+<ol>
+<li>整个脚本会被<strong>一次性</strong>发送到Redis服务器。</li>
+<li>Redis会<strong>单线程地、不被任何其他命令打断地</strong>执行这个脚本中的所有命令。</li>
+<li>脚本执行完毕后，才会去处理其他客户端的请求。</li>
+</ol>
+<p>这就相当于把“读取-修改-写入”这三个步骤打包成一个“超级命令”，这个“超级命令”是原子的。</p>
+<p>用Lua脚本实现安全的计数器自增：</p>
+<p>lua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- 这个脚本是原子的！</span><br><span class="line">local current = redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="line">local new_value = current + 1</span><br><span class="line">redis.call(&#x27;SET&#x27;, KEYS[1], new_value)</span><br><span class="line">return new_value</span><br></pre></td></tr></table></figure>
+
+
+
+<p>现在，即使在t1时刻有100个客户端同时发送这个脚本，Redis也会一个接一个地执行它们，每个脚本在执行时都能看到前一个脚本执行后的最新结果，绝不会出现丢失更新。</p>
+<h4 id="为什么释放锁也需要用Lua？（即使只有一条命令）"><a href="#为什么释放锁也需要用Lua？（即使只有一条命令）" class="headerlink" title="为什么释放锁也需要用Lua？（即使只有一条命令）"></a>为什么释放锁也需要用Lua？（即使只有一条命令）</h4><p>这是一个更精妙的问题。释放锁的典型逻辑是：<br><strong>“只有锁的值是我当初设置的那个随机值，我才能够删除它，否则不能删。”</strong></p>
+<p>这实际上包含了 <strong>“比较”</strong> 和 <strong>“删除”</strong> 两个操作。如果我们不用Lua脚本，可能会这样实现：</p>
+<p>bash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># 非原子操作，有风险！</span><br><span class="line">if redis.call(&quot;GET&quot;, &quot;my_lock&quot;) == my_random_value then</span><br><span class="line">    redis.call(&quot;DEL&quot;, &quot;my_lock&quot;)</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这段伪代码在客户端执行，它对应了两次Redis网络请求：一次 <code>GET</code>，一次（可能发生的）<code>DEL</code>。</p>
+<p><strong>不安全的场景：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">时间</th>
+<th align="left">客户端A（锁持有者）</th>
+<th align="left">Redis服务器</th>
+<th align="left">客户端B（竞争者）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">t1</td>
+<td align="left">发送 <code>GET my_lock</code></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">t2</td>
+<td align="left"></td>
+<td align="left">执行 <code>GET</code>，返回 <code>abc123</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">t3</td>
+<td align="left">判断值匹配，准备删除</td>
+<td align="left"></td>
+<td align="left"><strong>（锁超时，被Redis自动释放）</strong></td>
+</tr>
+<tr>
+<td align="left">t4</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><strong>发送 <code>SET my_lock def456 ...</code> 成功获取锁</strong></td>
+</tr>
+<tr>
+<td align="left">t5</td>
+<td align="left">发送 <code>DEL my_lock</code></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">t6</td>
+<td align="left"></td>
+<td align="left">执行 <code>DEL</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left">t7</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><strong>客户端B的锁被意外删除了！</strong></td>
+</tr>
+</tbody></table>
+<p><strong>发生了什么？</strong><br>在客户端A执行 <code>GET</code> 和 <code>DEL</code> 的间隙，锁因为超时而被自动释放了，然后客户端B成功获取了锁。紧接着，客户端A的 <code>DEL</code> 命令到达，<strong>误删了客户端B持有的锁</strong>，导致系统状态错误。</p>
+<p><strong>安全的做法：使用Lua脚本原子地释放锁</strong></p>
+<p>lua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if redis.call(&quot;GET&quot;, KEYS[1]) == ARGV[1] then</span><br><span class="line">    return redis.call(&quot;DEL&quot;, KEYS[1])</span><br><span class="line">else</span><br><span class="line">    return 0</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这个脚本将 <strong>“检查所有权”</strong> 和 <strong>“删除锁”</strong> 两个操作原子地捆绑在一起。在执行这个脚本时，不会有其他命令能插入其中，从而彻底避免了误删他人锁的风险。</p>
+<h3 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h3><ol>
+<li><strong><code>GET-&gt;计算-&gt;SET</code>不安全</strong>：原因在于<strong>客户端并发</strong>，而非Redis内部。多个客户端的操作序列会相互交织，导致“丢失更新”。</li>
+<li><strong>Lua脚本的作用</strong>：它将多个命令组合成一个原子单元，解决了客户端层面的并发问题。</li>
+<li><strong>释放锁用Lua</strong>：因为释放锁的本质是 <strong>“先验证，后删除”</strong> 的复合操作。必须用Lua保证这两个步骤的原子性，防止在验证通过后、执行删除前，锁因超时而被其他客户端获取，从而导致误删。</li>
+</ol>
+<p>所以，Lua脚本是Redis提供给客户端的一个“安全舱”，让客户端能将复杂的业务逻辑在服务器端原子地执行。</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p># 这不是一个原子操作！ value &#x3D; GET counter new_value &#x3D; value + 1 SET counter new_value</p>
+</blockquote>
+<p>您指出的这一点非常关键！这个问题是Redis并发编程中最核心的困惑点。让我用一个更直观的方式来解释为什么它不安全。</p>
+<h2 id="核心问题：Redis的单线程-vs-客户端的并发"><a href="#核心问题：Redis的单线程-vs-客户端的并发" class="headerlink" title="核心问题：Redis的单线程 vs 客户端的并发"></a>核心问题：Redis的单线程 vs 客户端的并发</h2><p><strong>关键要理解：</strong> Redis服务器内部是单线程的，但可以有<strong>多个客户端同时发送命令</strong>。</p>
+<p>让我们看一个具体的场景：</p>
+<h3 id="场景：两个客户端同时执行计数器增加"><a href="#场景：两个客户端同时执行计数器增加" class="headerlink" title="场景：两个客户端同时执行计数器增加"></a>场景：两个客户端同时执行计数器增加</h3><p>假设初始值 <code>counter = 10</code>，两个客户端都要执行：</p>
+<p>bash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">value = GET counter      # 第1步</span><br><span class="line">new_value = value + 1    # 第2步  </span><br><span class="line">SET counter new_value    # 第3步</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="实际发生的时间线："><a href="#实际发生的时间线：" class="headerlink" title="实际发生的时间线："></a>实际发生的时间线：</h3><table>
+<thead>
+<tr>
+<th align="left">时间</th>
+<th align="left">客户端A</th>
+<th align="left">Redis服务器</th>
+<th align="left">客户端B</th>
+<th align="left">Counter值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">t1</td>
+<td align="left"><strong>发送</strong> <code>GET counter</code></td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t2</td>
+<td align="left"></td>
+<td align="left"><strong>执行</strong> <code>GET counter</code></td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t3</td>
+<td align="left"><strong>收到</strong> 10，计算 10+1&#x3D;11</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t4</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><strong>发送</strong> <code>GET counter</code></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t5</td>
+<td align="left"></td>
+<td align="left"><strong>执行</strong> <code>GET counter</code></td>
+<td align="left"></td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t6</td>
+<td align="left"><strong>发送</strong> <code>SET counter 11</code></td>
+<td align="left"></td>
+<td align="left"><strong>收到</strong> 10，计算 10+1&#x3D;11</td>
+<td align="left">10</td>
+</tr>
+<tr>
+<td align="left">t7</td>
+<td align="left"></td>
+<td align="left"><strong>执行</strong> <code>SET counter 11</code></td>
+<td align="left"></td>
+<td align="left"><strong>11</strong></td>
+</tr>
+<tr>
+<td align="left">t8</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left"><strong>发送</strong> <code>SET counter 11</code></td>
+<td align="left">11</td>
+</tr>
+<tr>
+<td align="left">t9</td>
+<td align="left"></td>
+<td align="left"><strong>执行</strong> <code>SET counter 11</code></td>
+<td align="left"></td>
+<td align="left"><strong>11</strong></td>
+</tr>
+</tbody></table>
+<h3 id="问题分析："><a href="#问题分析：" class="headerlink" title="问题分析："></a>问题分析：</h3><ol>
+<li><strong>两个客户端都读取了相同的旧值</strong>（10）</li>
+<li><strong>都基于相同的旧值进行计算</strong>（10+1&#x3D;11）</li>
+<li><strong>依次写回相同的结果</strong>（11）</li>
+<li><strong>最终结果</strong>：执行了两次增加操作，但counter只从10变为11</li>
+</ol>
+<h2 id="为什么说这不是原子操作？"><a href="#为什么说这不是原子操作？" class="headerlink" title="为什么说这不是原子操作？"></a>为什么说这不是原子操作？</h2><p>因为”读取-修改-写入”这三个步骤作为一个<strong>业务逻辑单元</strong>被打断了：</p>
+<ul>
+<li><strong>客户端A</strong>：<code>GET(10)</code> → 计算(11) → <code>SET(11)</code></li>
+<li><strong>客户端B</strong>：<code>GET(10)</code> → 计算(11) → <code>SET(11)</code></li>
+</ul>
+<p>客户端B的<code>GET</code>操作<strong>插入</strong>在客户端A的<code>GET</code>和<code>SET</code>之间，导致客户端B基于过期的数据进行了操作。</p>
+<h2 id="安全的解决方案"><a href="#安全的解决方案" class="headerlink" title="安全的解决方案"></a>安全的解决方案</h2><h3 id="方案1：使用INCR命令（推荐）"><a href="#方案1：使用INCR命令（推荐）" class="headerlink" title="方案1：使用INCR命令（推荐）"></a>方案1：使用INCR命令（推荐）</h3><p>bash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INCR counter  # Redis原生原子操作</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="方案2：使用Lua脚本"><a href="#方案2：使用Lua脚本" class="headerlink" title="方案2：使用Lua脚本"></a>方案2：使用Lua脚本</h3><p>lua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-- 这个整个脚本是原子的！</span><br><span class="line">local current = redis.call(&#x27;GET&#x27;, KEYS[1])</span><br><span class="line">local new_value = current + 1</span><br><span class="line">redis.call(&#x27;SET&#x27;, KEYS[1], new_value)</span><br><span class="line">return new_value</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="方案3：使用WATCH-MULTI-EXEC（乐观锁）"><a href="#方案3：使用WATCH-MULTI-EXEC（乐观锁）" class="headerlink" title="方案3：使用WATCH&#x2F;MULTI&#x2F;EXEC（乐观锁）"></a>方案3：使用WATCH&#x2F;MULTI&#x2F;EXEC（乐观锁）</h3><p>bash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">WATCH counter</span><br><span class="line">value = GET counter</span><br><span class="line">new_value = value + 1</span><br><span class="line">MULTI</span><br><span class="line">SET counter new_value</span><br><span class="line">EXEC  # 如果counter被其他客户端修改，这里会失败</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="总结-4"><a href="#总结-4" class="headerlink" title="总结"></a>总结</h2><p><strong>不安全的原因不是Redis内部执行顺序问题，而是多个客户端的操作序列相互交织，导致数据竞争。</strong></p>
+<ul>
+<li>✅ <strong>安全</strong>：单个命令（INCR、SET、GET）</li>
+<li>❌ <strong>不安全</strong>：多个命令组成的业务逻辑（GET→计算→SET）</li>
+<li>✅ <strong>解决方案</strong>：使用原子命令、Lua脚本、或事务</li>
+</ul>
+<p>这就是为什么在分布式系统和并发编程中，即使底层存储是单线程的，我们仍然需要关心原子性问题。</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p>redis不是数据库吗，跟处理网络请求有什么关系</p>
+</blockquote>
+<p>您这个问题问到了Redis架构的核心！这确实是很多人的困惑点：<strong>一个数据库为什么要处理网络请求？</strong></p>
+<p>让我用一个清晰的类比来解释，您会立刻明白其中的关系。</p>
+<h2 id="核心类比：餐厅厨房"><a href="#核心类比：餐厅厨房" class="headerlink" title="核心类比：餐厅厨房"></a>核心类比：餐厅厨房</h2><ul>
+<li><strong>Redis数据库引擎（内存数据结构）</strong> &#x3D; <strong>厨房和厨师</strong><ul>
+<li>负责真正的“烹饪”（数据操作）：切菜、炒菜、摆盘（GET、SET、INCR等）</li>
+</ul>
+</li>
+<li><strong>网络请求处理模块</strong> &#x3D; <strong>服务员团队</strong><ul>
+<li>负责接待顾客、接收订单、把菜送回餐桌</li>
+<li>理解顾客的语言（Redis协议），翻译给厨师</li>
+</ul>
+</li>
+</ul>
+<h2 id="为什么Redis要自己处理网络请求？"><a href="#为什么Redis要自己处理网络请求？" class="headerlink" title="为什么Redis要自己处理网络请求？"></a>为什么Redis要自己处理网络请求？</h2><h3 id="1-性能考量：避免中间层开销"><a href="#1-性能考量：避免中间层开销" class="headerlink" title="1. 性能考量：避免中间层开销"></a>1. <strong>性能考量：避免中间层开销</strong></h3><p><strong>传统数据库架构：</strong></p>
+<p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端 → Web服务器 → 数据库驱动 → 数据库进程</span><br></pre></td></tr></table></figure>
+
+
+
+<p>每个箭头都是一次进程间通信和数据拷贝。</p>
+<p><strong>Redis架构：</strong></p>
+<p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端 → Redis进程（直接处理）</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Redis自己处理网络协议，减少了中间环节，数据从网卡到内存操作路径最短。</p>
+<h3 id="2-协议优化：Redis协议极其简单"><a href="#2-协议优化：Redis协议极其简单" class="headerlink" title="2. 协议优化：Redis协议极其简单"></a>2. <strong>协议优化：Redis协议极其简单</strong></h3><p>Redis没有使用复杂的SQL协议，而是设计了非常简单的文本协议：</p>
+<p>bash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 客户端发送：</span><br><span class="line">*3\r\n$3\r\nSET\r\n$5\r\nmykey\r\n$7\r\nmyvalue\r\n</span><br><span class="line"></span><br><span class="line"># Redis回复：</span><br><span class="line">+OK\r\n</span><br></pre></td></tr></table></figure>
+
+
+
+<p>这种简单协议让网络处理变得非常高效。</p>
+<h3 id="3-单线程模型的完美匹配"><a href="#3-单线程模型的完美匹配" class="headerlink" title="3. 单线程模型的完美匹配"></a>3. <strong>单线程模型的完美匹配</strong></h3><p>还记得Redis的单线程模型吗？网络I&#x2F;O和命令执行在同一个线程中：</p>
+<p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">循环 &#123;</span><br><span class="line">  1. 检查哪些客户端发来了数据（I/O多路复用）</span><br><span class="line">  2. 读取网络数据并解析成命令</span><br><span class="line">  3. 执行命令（操作内存数据）</span><br><span class="line">  4. 将结果写回网络</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="现实世界的对比"><a href="#现实世界的对比" class="headerlink" title="现实世界的对比"></a>现实世界的对比</h2><p><strong>MySQL的处理方式：</strong></p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 应用程序端</span><br><span class="line">Connection conn = DriverManager.getConnection(&quot;jdbc:mysql://localhost:3306/mydb&quot;);</span><br><span class="line">Statement stmt = conn.createStatement();</span><br><span class="line">ResultSet rs = stmt.executeQuery(&quot;SELECT * FROM users&quot;);  // 这里要通过JDBC驱动、TCP连接、MySQL协议等层层转换</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>Redis的处理方式：</strong></p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// 应用程序端</span><br><span class="line">Jedis jedis = new Jedis(&quot;localhost&quot;, 6379);</span><br><span class="line">String value = jedis.get(&quot;mykey&quot;);  // 直接发送简单的Redis协议命令</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="Redis的网络架构演进"><a href="#Redis的网络架构演进" class="headerlink" title="Redis的网络架构演进"></a>Redis的网络架构演进</h2><h3 id="Redis-6-0-之前：纯单线程处理一切"><a href="#Redis-6-0-之前：纯单线程处理一切" class="headerlink" title="Redis 6.0 之前：纯单线程处理一切"></a>Redis 6.0 之前：纯单线程处理一切</h3><p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端请求 → Redis主线程（处理网络I/O + 执行命令）</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Redis-6-0-之后：网络I-O多线程化"><a href="#Redis-6-0-之后：网络I-O多线程化" class="headerlink" title="Redis 6.0 之后：网络I&#x2F;O多线程化"></a>Redis 6.0 之后：网络I&#x2F;O多线程化</h3><p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">客户端请求 → I/O线程（读取数据、解析协议） → 主线程（执行命令） → I/O线程（发送结果）</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>关键点：</strong> 即使引入了多线程，也只是在网络I&#x2F;O层面，<strong>命令执行还是单线程</strong>。</p>
+<h2 id="为什么不能把网络和处理分开？"><a href="#为什么不能把网络和处理分开？" class="headerlink" title="为什么不能把网络和处理分开？"></a>为什么不能把网络和处理分开？</h2><p>理论上可以，但这样会：</p>
+<ol>
+<li><strong>增加延迟</strong>：需要进程间通信</li>
+<li><strong>增加复杂度</strong>：需要维护两个独立的系统</li>
+<li><strong>丧失性能优势</strong>：Redis的核心竞争力就是极低的延迟</li>
+</ol>
+<h2 id="总结-5"><a href="#总结-5" class="headerlink" title="总结"></a>总结</h2><p><strong>Redis既是数据库，又是网络服务，这是因为：</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">角色</th>
+<th align="left">职责</th>
+<th align="left">为什么重要</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>数据库</strong></td>
+<td align="left">内存数据存储和操作</td>
+<td align="left">提供快速的数据访问能力</td>
+</tr>
+<tr>
+<td align="left"><strong>网络服务器</strong></td>
+<td align="left">处理客户端连接和协议</td>
+<td align="left">让外部应用能够访问数据库服务</td>
+</tr>
+</tbody></table>
+<p><strong>简单来说：Redis把”服务员”（网络处理）和”厨师”（数据操作）都放在同一个厨房里，这样上菜速度最快！</strong></p>
+<p>这就解释了为什么我们讨论Redis时要同时关注它的单线程模型、网络I&#x2F;O处理能力和数据操作能力——它们是一个紧密集成的整体，共同造就了Redis的高性能特性。</p>
+<p>redis中也存在并发问题是吧，用lua解决。这个并发问题我可以理解为是引入了网络io多线程吗</p>
+<p>不，您这个理解是<strong>不准确</strong>的。这是一个非常重要的区别！</p>
+<p>Redis的并发问题<strong>与网络I&#x2F;O多线程无关</strong>，它的根源在于 <strong>“多个客户端并发访问”</strong> 这个基本事实。</p>
+<p>让我用一个新的比喻来澄清：</p>
+<h2 id="核心比喻：超市收银台"><a href="#核心比喻：超市收银台" class="headerlink" title="核心比喻：超市收银台"></a>核心比喻：超市收银台</h2><ul>
+<li><strong>Redis服务器</strong> &#x3D; 一个超市</li>
+<li><strong>Redis主线程</strong> &#x3D; 唯一的收银员</li>
+<li><strong>网络I&#x2F;O多线程</strong> &#x3D; 多个引导员（负责帮顾客把商品放到传送带上）</li>
+<li><strong>多个客户端</strong> &#x3D; 很多顾客</li>
+</ul>
+<h3 id="Redis-6-0-之前（无网络I-O多线程）："><a href="#Redis-6-0-之前（无网络I-O多线程）：" class="headerlink" title="Redis 6.0 之前（无网络I&#x2F;O多线程）："></a>Redis 6.0 之前（无网络I&#x2F;O多线程）：</h3><p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">顾客们自己把商品放到传送带上 → 收银员扫描商品 + 收款</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Redis-6-0-之后（有网络I-O多线程）："><a href="#Redis-6-0-之后（有网络I-O多线程）：" class="headerlink" title="Redis 6.0 之后（有网络I&#x2F;O多线程）："></a>Redis 6.0 之后（有网络I&#x2F;O多线程）：</h3><p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">引导员帮顾客把商品放到传送带上 → 收银员扫描商品 + 收款</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>关键点：无论有没有引导员，收银员都只有一个！</strong></p>
+<h2 id="并发问题的真正来源"><a href="#并发问题的真正来源" class="headerlink" title="并发问题的真正来源"></a>并发问题的真正来源</h2><p>并发问题发生在这样的场景：</p>
+<p><strong>顾客A和顾客B都想买最后一瓶牛奶</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">时间</th>
+<th align="left">顾客A</th>
+<th align="left">收银员</th>
+<th align="left">顾客B</th>
+<th align="left">牛奶库存</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">t1</td>
+<td align="left">问：”还有牛奶吗？”</td>
+<td align="left">查看：”有1瓶”</td>
+<td align="left"></td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">t2</td>
+<td align="left">决定要买</td>
+<td align="left"></td>
+<td align="left">问：”还有牛奶吗？”</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">t3</td>
+<td align="left"></td>
+<td align="left">查看：”有1瓶”</td>
+<td align="left"></td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">t4</td>
+<td align="left">说：”我买这瓶牛奶”</td>
+<td align="left"></td>
+<td align="left">决定要买</td>
+<td align="left">1</td>
+</tr>
+<tr>
+<td align="left">t5</td>
+<td align="left"></td>
+<td align="left">卖掉牛奶给A</td>
+<td align="left"></td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">t6</td>
+<td align="left"></td>
+<td align="left"></td>
+<td align="left">说：”我买这瓶牛奶”</td>
+<td align="left">0</td>
+</tr>
+<tr>
+<td align="left">t7</td>
+<td align="left"></td>
+<td align="left">❌ 无法卖给B（已售完）</td>
+<td align="left"></td>
+<td align="left">0</td>
+</tr>
+</tbody></table>
+<p><strong>问题结果：</strong> 两个顾客都认为能买到牛奶，但只有一个人买到了。</p>
+<h2 id="这与网络I-O多线程的关系"><a href="#这与网络I-O多线程的关系" class="headerlink" title="这与网络I&#x2F;O多线程的关系"></a>这与网络I&#x2F;O多线程的关系</h2><p><strong>网络I&#x2F;O多线程只是改变了”问问题”的方式：</strong></p>
+<ul>
+<li><strong>之前</strong>：顾客自己直接问收银员</li>
+<li><strong>之后</strong>：顾客告诉引导员，引导员再问收银员</li>
+</ul>
+<p><strong>但核心问题没变：</strong> 在顾客A”询问”和”购买”之间，顾客B插进来也”询问”了。</p>
+<h2 id="Lua脚本如何解决这个问题？"><a href="#Lua脚本如何解决这个问题？" class="headerlink" title="Lua脚本如何解决这个问题？"></a>Lua脚本如何解决这个问题？</h2><p>Lua脚本相当于让顾客<strong>一次性完成整个操作</strong>：</p>
+<p>lua</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-- 这个脚本是原子的：检查库存 → 如果有就购买</span><br><span class="line">local stock = redis.call(&#x27;GET&#x27;, &#x27;milk_stock&#x27;)</span><br><span class="line">if tonumber(stock) &gt; 0 then</span><br><span class="line">    redis.call(&#x27;DECR&#x27;, &#x27;milk_stock&#x27;)</span><br><span class="line">    return &quot;购买成功&quot;</span><br><span class="line">else</span><br><span class="line">    return &quot;库存不足&quot;</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>执行过程：</strong></p>
+<ol>
+<li>顾客把整个购物清单（Lua脚本）交给收银员</li>
+<li>收银员<strong>连续执行</strong>所有步骤，中间不处理其他顾客</li>
+<li>返回最终结果</li>
+</ol>
+<h2 id="总结澄清"><a href="#总结澄清" class="headerlink" title="总结澄清"></a>总结澄清</h2><table>
+<thead>
+<tr>
+<th align="left">概念</th>
+<th align="left">是否导致并发问题</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>多个客户端并发访问</strong></td>
+<td align="left">✅ <strong>是根本原因</strong></td>
+<td align="left">多个客户端的操作序列会相互交织</td>
+</tr>
+<tr>
+<td align="left"><strong>网络I&#x2F;O多线程</strong></td>
+<td align="left">❌ <strong>不是原因</strong></td>
+<td align="left">只是改变了网络数据处理方式，不改变命令执行顺序</td>
+</tr>
+<tr>
+<td align="left"><strong>Redis单线程模型</strong></td>
+<td align="left">✅ <strong>反而简化了问题</strong></td>
+<td align="left">如果在多线程数据库中，并发问题会更复杂</td>
+</tr>
+</tbody></table>
+<p><strong>简单来说：</strong></p>
+<ul>
+<li><strong>并发问题的根源</strong>：多个客户端同时发送命令</li>
+<li><strong>Lua的解决方案</strong>：把多个命令打包成一个”超级命令”</li>
+<li><strong>网络I&#x2F;O多线程的角色</strong>：只是高效的”传令兵”，不改变战斗规则</li>
+</ul>
+<p>所以，Redis的并发问题是分布式系统中典型的”客户端竞争”问题，与Redis内部的网络I&#x2F;O多线程架构没有直接关系。</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p>我懂了，你可以总结一下吗就是多线程单线程原子性这一类问题还有一些什么问题你都给我总结</p>
+</blockquote>
+<p>好的，绝对可以！我来为您做一个全面的总结，把单线程、多线程、原子性、Redis并发这些核心概念串起来，并指出一些常见的陷阱和进阶问题。</p>
+<hr>
+<h2 id="一、核心概念终极总结"><a href="#一、核心概念终极总结" class="headerlink" title="一、核心概念终极总结"></a>一、核心概念终极总结</h2><h3 id="1-单线程-vs-多线程"><a href="#1-单线程-vs-多线程" class="headerlink" title="1. 单线程 vs 多线程"></a>1. 单线程 vs 多线程</h3><table>
+<thead>
+<tr>
+<th align="left">维度</th>
+<th align="left">单线程</th>
+<th align="left">多线程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>工作模式</strong></td>
+<td align="left">一个线程顺序处理所有任务</td>
+<td align="left">多个线程并行处理任务</td>
+</tr>
+<tr>
+<td align="left"><strong>好比</strong></td>
+<td align="left">单车道收费站</td>
+<td align="left">多车道高速公路</td>
+</tr>
+<tr>
+<td align="left"><strong>优势</strong></td>
+<td align="left">简单、无锁竞争、无上下文切换</td>
+<td align="left">高吞吐、充分利用多核CPU</td>
+</tr>
+<tr>
+<td align="left"><strong>劣势</strong></td>
+<td align="left">无法利用多核、怕慢操作阻塞</td>
+<td align="left">复杂、有线程安全、死锁问题</td>
+</tr>
+<tr>
+<td align="left"><strong>代表</strong></td>
+<td align="left">Redis核心模块</td>
+<td align="left">Java Web服务器、MySQL</td>
+</tr>
+</tbody></table>
+<p><strong>关键理解</strong>：单线程的”慢”是指怕单个任务耗时，多线程的”复杂”是指要协调多个执行者。</p>
+<h3 id="2-原子性"><a href="#2-原子性" class="headerlink" title="2. 原子性"></a>2. 原子性</h3><ul>
+<li><strong>定义</strong>：操作不可分割，要么全完成，要么全不完成</li>
+<li><strong>好比</strong>：银行转账（扣款+入账必须一起完成）</li>
+<li><strong>层面</strong>：<ul>
+<li><strong>CPU指令级</strong>：单条机器指令是原子的</li>
+<li><strong>数据库事务级</strong>：多个SQL语句组成原子操作</li>
+<li><strong>业务逻辑级</strong>：多个业务步骤组成原子操作</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-Redis的独特架构"><a href="#3-Redis的独特架构" class="headerlink" title="3. Redis的独特架构"></a>3. Redis的独特架构</h3><p>text</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Redis = 网络服务器 + 内存数据库</span><br></pre></td></tr></table></figure>
+
+
+
+<ul>
+<li><strong>单线程执行命令</strong>：保证每个命令的原子性和数据一致性</li>
+<li><strong>多客户端并发</strong>：这才是Redis并发问题的根源</li>
+<li><strong>网络I&#x2F;O多线程</strong>：只是”传令兵”，不改变命令执行规则</li>
+</ul>
+<hr>
+<h2 id="二、常见问题与陷阱总结"><a href="#二、常见问题与陷阱总结" class="headerlink" title="二、常见问题与陷阱总结"></a>二、常见问题与陷阱总结</h2><h3 id="1-“count-为什么不是原子操作？”"><a href="#1-“count-为什么不是原子操作？”" class="headerlink" title="1. “count++为什么不是原子操作？”"></a>1. “count++为什么不是原子操作？”</h3><p><strong>答案</strong>：因为它对应3步CPU指令：读取→修改→写入，多线程环境下这三步可能被打断。</p>
+<h3 id="2-“Redis单线程为什么还有并发问题？”"><a href="#2-“Redis单线程为什么还有并发问题？”" class="headerlink" title="2. “Redis单线程为什么还有并发问题？”"></a>2. “Redis单线程为什么还有并发问题？”</h3><p><strong>答案</strong>：并发问题来自多个客户端的操作序列交织，不是Redis内部线程安全问题。</p>
+<h3 id="3-“Redis网络I-O多线程会导致并发问题吗？”"><a href="#3-“Redis网络I-O多线程会导致并发问题吗？”" class="headerlink" title="3. “Redis网络I&#x2F;O多线程会导致并发问题吗？”"></a>3. “Redis网络I&#x2F;O多线程会导致并发问题吗？”</h3><p><strong>答案</strong>：不会。它只负责读取&#x2F;发送数据，命令执行还是单线程的。</p>
+<h3 id="4-“什么时候需要用Lua脚本？”"><a href="#4-“什么时候需要用Lua脚本？”" class="headerlink" title="4. “什么时候需要用Lua脚本？”"></a>4. “什么时候需要用Lua脚本？”</h3><p><strong>答案</strong>：当业务逻辑需要多个Redis命令作为一个不可分割的整体时：</p>
+<ul>
+<li>先读后写的竞争场景（计数器、库存扣减）</li>
+<li>复合操作（检查并删除锁、集合操作+判断）</li>
+</ul>
+<h3 id="5-“单个Redis命令总是安全的吗？”"><a href="#5-“单个Redis命令总是安全的吗？”" class="headerlink" title="5. “单个Redis命令总是安全的吗？”"></a>5. “单个Redis命令总是安全的吗？”</h3><p><strong>答案</strong>：是的，单个Redis命令在服务器内部是原子执行的。</p>
+<hr>
+<h2 id="三、进阶问题与扩展思考"><a href="#三、进阶问题与扩展思考" class="headerlink" title="三、进阶问题与扩展思考"></a>三、进阶问题与扩展思考</h2><h3 id="1-性能边界问题"><a href="#1-性能边界问题" class="headerlink" title="1. 性能边界问题"></a>1. 性能边界问题</h3><ul>
+<li><strong>单线程瓶颈</strong>：当value很大时，<code>GET</code>&#x2F;<code>SET</code>大key会阻塞其他请求</li>
+<li><strong>内存压力</strong>：数据量大时，持久化（RDB&#x2F;AOF）可能影响性能</li>
+<li><strong>网络延迟</strong>：在高并发下，网络带宽可能成为瓶颈</li>
+</ul>
+<h3 id="2-集群环境下的原子性"><a href="#2-集群环境下的原子性" class="headerlink" title="2. 集群环境下的原子性"></a>2. 集群环境下的原子性</h3><ul>
+<li><strong>Lua脚本限制</strong>：所有key必须在同一个节点（相同hash slot）</li>
+<li><strong>跨节点事务</strong>：无法保证跨多个节点的原子性</li>
+<li><strong>分布式锁</strong>：需要Redlock等算法，比单实例更复杂</li>
+</ul>
+<h3 id="3-与数据库的对比"><a href="#3-与数据库的对比" class="headerlink" title="3. 与数据库的对比"></a>3. 与数据库的对比</h3><table>
+<thead>
+<tr>
+<th align="left">场景</th>
+<th align="left">Redis</th>
+<th align="left">传统数据库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>简单计数</strong></td>
+<td align="left"><code>INCR</code>原子完成</td>
+<td align="left"><code>UPDATE table SET count=count+1</code></td>
+</tr>
+<tr>
+<td align="left"><strong>库存扣减</strong></td>
+<td align="left">需要Lua脚本保证原子性</td>
+<td align="left">可用数据库行锁&#x2F;事务</td>
+</tr>
+<tr>
+<td align="left"><strong>复杂事务</strong></td>
+<td align="left">不支持回滚、隔离级别</td>
+<td align="left">完整ACID事务支持</td>
+</tr>
+</tbody></table>
+<h3 id="4-实际开发中的坑"><a href="#4-实际开发中的坑" class="headerlink" title="4. 实际开发中的坑"></a>4. 实际开发中的坑</h3><ul>
+<li><strong>慢查询阻塞</strong>：<code>KEYS *</code>、大数据量的<code>HGETALL</code>会阻塞整个实例</li>
+<li><strong>内存淘汰</strong>：当内存不足时，淘汰策略可能影响性能</li>
+<li><strong>持久化阻塞</strong>：RDB fork过程可能瞬间阻塞</li>
+<li><strong>客户端连接池</strong>：不合理的连接池配置可能导致问题</li>
+</ul>
+<h3 id="5-解决方案模式"><a href="#5-解决方案模式" class="headerlink" title="5. 解决方案模式"></a>5. 解决方案模式</h3><p>bash</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 模式1：使用原子命令</span><br><span class="line">INCR counter</span><br><span class="line">DECR stock</span><br><span class="line">SETNX lock_key identifier</span><br><span class="line"></span><br><span class="line"># 模式2：使用Lua脚本（复合操作）</span><br><span class="line">redis-cli --eval check_and_set.lua key1 key2 , arg1 arg2</span><br><span class="line"></span><br><span class="line"># 模式3：使用WATCH（乐观锁）</span><br><span class="line">WATCH key</span><br><span class="line">MULTI  </span><br><span class="line">SET key new_value</span><br><span class="line">EXEC  # 如果key被修改，这里会失败</span><br><span class="line"></span><br><span class="line"># 模式4：调整架构</span><br><span class="line">- 大key拆分成小key</span><br><span class="line">- 使用批量操作pipeline</span><br><span class="line">- 读写分离/集群分片</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h2 id="四、核心要点记忆口诀"><a href="#四、核心要点记忆口诀" class="headerlink" title="四、核心要点记忆口诀"></a>四、核心要点记忆口诀</h2><ol>
+<li><strong>单线程</strong>：一人干活，简单利索，就怕慢活</li>
+<li><strong>多线程</strong>：多人协作，能力强大，需要管理</li>
+<li><strong>原子性</strong>：要么全做，要么不做，不能半途</li>
+<li><strong>Redis并发</strong>：外患非内忧，客户竞争是根源</li>
+<li><strong>Lua脚本</strong>：打包命令，原子执行，解决竞争</li>
+</ol>
+<hr>
+<h2 id="五、面试常见问题清单"><a href="#五、面试常见问题清单" class="headerlink" title="五、面试常见问题清单"></a>五、面试常见问题清单</h2><ol>
+<li>Redis为什么选择单线程模型？</li>
+<li>单线程的Redis为什么这么快？</li>
+<li>描述一下Redis的持久化机制</li>
+<li>Redis如何实现分布式锁？有什么坑？</li>
+<li>Redis的并发竞争问题如何解决？</li>
+<li>什么是缓存穿透、击穿、雪崩？如何解决？</li>
+<li>Redis集群模式如何保证数据一致性？</li>
+<li>为什么Redis6.0要引入多线程？</li>
+</ol>
+<p>这个总结几乎涵盖了所有关于单线程、多线程、原子性和Redis并发的核心知识点。掌握这些，您就对这类问题有了系统的理解！</p>
+<blockquote>
+<p>[!NOTE]</p>
+<p>并发和多线程有什么关系？它们是一个概念吗？</p>
+</blockquote>
+<p>问得非常好！除了多线程，实现并发还有其他几种重要且经典的方式。多线程虽然是当今最主流的方式，但了解其他方式能让你对并发有更全面的理解，并在特定场景下做出更优的选择。</p>
+<p>以下是除了多线程之外，几种主要的并发实现方式：</p>
+<hr>
+<h3 id="1-多进程"><a href="#1-多进程" class="headerlink" title="1. 多进程"></a>1. 多进程</h3><p>这是最直观、历史最悠久的一种并发方式。</p>
+<ul>
+<li><p><strong>核心思想</strong>：启动多个操作系统进程，每个进程独立执行自己的任务。</p>
+</li>
+<li><p><strong>与多线程的区别</strong>：</p>
+<ul>
+<li><strong>隔离性</strong>：进程拥有各自独立的内存空间（代码、数据、堆栈），一个进程崩溃通常不会影响其他进程。这是它最大的优点，提供了出色的稳定性。</li>
+<li><strong>通信成本</strong>：因为内存不共享，进程间通信需要依赖操作系统提供的机制，如管道、消息队列、共享内存等，这比线程间直接读写共享内存要慢得多。</li>
+<li><strong>创建和切换成本</strong>：进程的创建、销毁和上下文切换比线程更耗时、更消耗资源。</li>
+</ul>
+</li>
+<li><p><strong>典型应用场景</strong>：</p>
+<ul>
+<li><strong>Chrome 浏览器</strong>：每个标签页都是一个独立的进程。这样即使某个标签页的网页崩溃或卡死，也不会导致整个浏览器崩溃。</li>
+<li><strong>Python 的 <code>multiprocessing</code> 库</strong>：为了绕过 GIL 对多线程的限制，使用多进程来真正利用多核CPU进行并行计算。</li>
+<li><strong>操作系统本身</strong>：同时运行着大量的系统进程和服务。</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-异步编程-基于事件的并发"><a href="#2-异步编程-基于事件的并发" class="headerlink" title="2. 异步编程 &#x2F; 基于事件的并发"></a>2. 异步编程 &#x2F; 基于事件的并发</h3><p>这是一种“单线程”并发模型，非常高效，近年来极为流行。</p>
+<ul>
+<li><p><strong>核心思想</strong>：只有一个主线程（通常称为事件循环）。当遇到需要等待的操作（如网络请求、文件读写）时，不阻塞线程，而是注册一个回调函数或挂起当前任务，然后立即去执行其他可以立即执行的任务。当等待的操作完成后，回调函数被调用或挂起的任务被恢复。</p>
+</li>
+<li><p><strong>关键机制</strong>：</p>
+<ul>
+<li><strong>非阻塞I&#x2F;O</strong>：这是异步编程的基础。</li>
+<li><strong>事件循环</strong>：不断检查是否有事件发生（如文件读取完毕、网络数据到达），并调用相应的处理函数。</li>
+<li><strong>协程</strong>：一种比线程更轻量的用户态“线程”，由程序员或语言的运行时在用户态进行调度，而不是由操作系统内核调度。<code>async/await</code> 语法是现代语言实现协程的常见方式。</li>
+</ul>
+</li>
+<li><p><strong>与多线程的对比</strong>：</p>
+<ul>
+<li><strong>优点</strong>：<ul>
+<li><strong>极高效率</strong>：没有线程创建、上下文切换的开销，特别适合I&#x2F;O密集型任务。</li>
+<li><strong>无锁编程</strong>：在单线程事件循环中，不存在资源竞争问题，避免了复杂的锁机制。</li>
+</ul>
+</li>
+<li><strong>缺点</strong>：<ul>
+<li><strong>编程复杂</strong>：回调地狱，逻辑被打散。虽然 <code>async/await</code> 语法极大地改善了这一点。</li>
+<li><strong>CPU密集型任务无力</strong>：如果一个任务长时间占用CPU，会阻塞整个事件循环，导致其他所有任务都被卡住。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>典型应用场景</strong>：</p>
+<ul>
+<li><strong>Node.js</strong>：其核心就是单线程事件循环模型，非常适合高并发的网络I&#x2F;O应用。</li>
+<li><strong>Python <code>asyncio</code></strong>：用于编写单线程并发代码。</li>
+<li><strong>Nginx</strong>：高性能Web服务器，使用异步事件驱动架构。</li>
+<li><strong>现代Web开发</strong>：大量的后端API服务都是I&#x2F;O密集型的，非常适合异步框架。</li>
+</ul>
+</li>
+</ul>
+<h3 id="3-绿色线程-用户态线程"><a href="#3-绿色线程-用户态线程" class="headerlink" title="3. 绿色线程 &#x2F; 用户态线程"></a>3. 绿色线程 &#x2F; 用户态线程</h3><p>这是一种介于操作系统线程和协程之间的概念。</p>
+<ul>
+<li><strong>核心思想</strong>：线程的创建、调度、销毁完全在用户空间的运行时库中管理，而不需要操作系统的直接参与。从操作系统的角度看，它只看到一个进程（或几个原生线程），但这个进程内部却模拟出了成百上千个“线程”。</li>
+<li><strong>特点</strong>：<ul>
+<li><strong>极其轻量</strong>：创建和切换成本远低于操作系统线程。</li>
+<li><strong>调度可控</strong>：由语言的运行时进行调度，可以实现更优化的调度策略。</li>
+</ul>
+</li>
+<li><strong>典型代表</strong>：<ul>
+<li><strong>Go 语言的 Goroutine</strong>：这是最成功的例子。Go 运行时会将大量的 Goroutine 映射到少量的操作系统线程上执行，实现了高效的并发。</li>
+<li><strong>早期Java</strong>：在Java 1.1时代，其线程模型就是绿色线程。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h3 id="总结与对比"><a href="#总结与对比" class="headerlink" title="总结与对比"></a>总结与对比</h3><table>
+<thead>
+<tr>
+<th align="left">实现方式</th>
+<th align="left">核心单位</th>
+<th align="left">调度者</th>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+<th align="left">最佳场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>多线程</strong></td>
+<td align="left">线程</td>
+<td align="left">操作系统</td>
+<td align="left">能利用多核、数据共享方便</td>
+<td align="left">竞争条件、锁、调试难</td>
+<td align="left">混合型任务（CPU+I&#x2F;O）</td>
+</tr>
+<tr>
+<td align="left"><strong>多进程</strong></td>
+<td align="left">进程</td>
+<td align="left">操作系统</td>
+<td align="left">稳定性高、隔离性好</td>
+<td align="left">创建慢、通信成本高、占资源</td>
+<td align="left">需要高稳定性和隔离性的任务</td>
+</tr>
+<tr>
+<td align="left"><strong>异步&#x2F;事件驱动</strong></td>
+<td align="left">任务&#x2F;协程</td>
+<td align="left">用户态事件循环</td>
+<td align="left">极高I&#x2F;O效率、无锁</td>
+<td align="left">CPU任务会阻塞、编程模型复杂</td>
+<td align="left"><strong>高并发I&#x2F;O密集型</strong>（网络、数据库）</td>
+</tr>
+<tr>
+<td align="left"><strong>绿色线程</strong></td>
+<td align="left">Goroutine等</td>
+<td align="left">用户态运行时</td>
+<td align="left">极其轻量、创建快、调度优</td>
+<td align="left">需要语言运行时支持</td>
+<td align="left"><strong>高并发通用场景</strong>（Go语言的典型用例）</td>
+</tr>
+</tbody></table>
+<h3 id="如何选择？"><a href="#如何选择？" class="headerlink" title="如何选择？"></a>如何选择？</h3><ol>
+<li><p><strong>任务类型是首要考虑因素</strong>：</p>
+<ul>
+<li><strong>CPU密集型</strong>：多进程或多线程（线程数约等于CPU核心数）。</li>
+<li><strong>I&#x2F;O密集型</strong>：<strong>异步编程</strong>或<strong>绿色线程</strong>是绝对的优势领域，可以轻松处理成千上万的并发连接。</li>
+</ul>
+</li>
+<li><p><strong>考虑开发效率和复杂度</strong>：</p>
+<ul>
+<li><strong>多线程</strong>的锁和竞态条件问题很棘手。</li>
+<li><strong>异步编程</strong>的 <code>async/await</code> 模型已经大大简化，但仍有心智负担。</li>
+<li><strong>Go 的 Goroutine</strong> 通过 <code>channel</code> 等机制，在易用性和性能之间取得了很好的平衡。</li>
+</ul>
+</li>
+</ol>
+<p>因此，并发是一个广阔的设计领域，<strong>多线程只是其中一种强大但并非唯一的工具</strong>。现代系统（如一个微服务架构）通常会混合使用这些技术：用多进程部署不同的服务，在单个服务内部用多线程处理计算，用异步网络库处理海量HTTP请求。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiongchaoyong.github.io">朝永</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiongchaoyong.github.io/2025/10/20/redis%E7%9B%B8%E5%85%B3%E7%9A%84%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/">https://xiongchaoyong.github.io/2025/10/20/redis%E7%9B%B8%E5%85%B3%E7%9A%84%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiongchaoyong.github.io" target="_blank">朝永的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E9%BB%91%E9%A9%AC/">黑马</a><a class="post-meta__tags" href="/tags/redis/">redis</a><a class="post-meta__tags" href="/tags/%E6%80%9D%E8%80%83/">思考</a><a class="post-meta__tags" href="/tags/%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/">头脑风暴</a></div><div class="post-share"><div class="social-share" data-image="/img/5.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2025/10/20/redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%8E%9F%E7%90%86%20%20/" title="redisson分布式锁"><img class="cover" src="/img/6.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">redisson分布式锁</div></div><div class="info-2"><div class="info-item-1">redisson分布式锁的原理 好的，我们来详细解析一下 Redisson 分布式锁的原理。它不仅实现了基本的加锁、解锁，还提供了一套非常健壮的解决方案来应对分布式环境下的各种复杂问题。 核心思想Redisson 分布式锁的核心思想是：在 Redis 中设置一个 Key-Value 对，如果这个 Key 不存在，则设置成功，代表获取锁成功；如果 Key 已经存在，则设置失败，代表获取锁失败。 通过 Redis 的单线程特性，确保多个客户端并发操作时，锁的互斥性。 然而，一个生产环境可用的分布式锁远不止这么简单，它必须解决以下几个关键问题：  互斥性：同一时刻，只有一个客户端能持有锁。 防死锁：即使持有锁的客户端崩溃或者网络中断，锁也能被释放，避免其他客户端无限期等待。 容错性：只要大部分 Redis 节点存活，客户端就能正常获取和释放锁。 可重入性：同一个线程可以多次获取同一把锁。  Redisson 的 RLock 接口实现了 java.util.concurrent.locks.Lock，提供了非常完善的分布式锁实现。其最经典和常用的是可重入锁。  核心原理分解1. 加锁机制...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2025/10/20/redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%8E%9F%E7%90%86%20%20/" title="redisson分布式锁"><img class="cover" src="/img/6.jpeg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">redisson分布式锁</div></div><div class="info-2"><div class="info-item-1">redisson分布式锁的原理 好的，我们来详细解析一下 Redisson 分布式锁的原理。它不仅实现了基本的加锁、解锁，还提供了一套非常健壮的解决方案来应对分布式环境下的各种复杂问题。 核心思想Redisson 分布式锁的核心思想是：在 Redis 中设置一个 Key-Value 对，如果这个 Key 不存在，则设置成功，代表获取锁成功；如果 Key 已经存在，则设置失败，代表获取锁失败。 通过 Redis 的单线程特性，确保多个客户端并发操作时，锁的互斥性。 然而，一个生产环境可用的分布式锁远不止这么简单，它必须解决以下几个关键问题：  互斥性：同一时刻，只有一个客户端能持有锁。 防死锁：即使持有锁的客户端崩溃或者网络中断，锁也能被释放，避免其他客户端无限期等待。 容错性：只要大部分 Redis 节点存活，客户端就能正常获取和释放锁。 可重入性：同一个线程可以多次获取同一把锁。  Redisson 的 RLock 接口实现了 java.util.concurrent.locks.Lock，提供了非常完善的分布式锁实现。其最经典和常用的是可重入锁。  核心原理分解1. 加锁机制...</div></div></div></a><a class="pagination-related" href="/2025/10/20/%E7%9F%AD%E4%BF%A1%E7%99%BB%E5%BD%95/" title="短信登录"><img class="cover" src="/img/2.jpeg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">短信登录</div></div><div class="info-2"><div class="info-item-1">1、短信登录1.1、导入黑马点评项目1.1.1 、导入SQL 1.1.2、有关当前模型手机或者app端发起请求，请求我们的nginx服务器，nginx基于七层模型走的事HTTP协议，可以实现基于Lua直接绕开tomcat访问redis，也可以作为静态资源服务器，轻松扛下上万并发， 负载均衡到下游tomcat服务器，打散流量，我们都知道一台4核8G的tomcat，在优化和处理简单业务的加持下，大不了就处理1000左右的并发， 经过nginx的负载均衡分流后，利用集群支撑起整个项目，同时nginx在部署了前端项目后，更是可以做到动静分离，进一步降低tomcat服务的压力，这些功能都得靠nginx起作用，所以nginx是整个项目中重要的一环。 在tomcat支撑起并发流量后，我们如果让tomcat直接去访问Mysql，根据经验Mysql企业级服务器只要上点并发，一般是16或32 核心cpu，32 或64G内存，像企业级mysql加上固态硬盘能够支撑的并发，大概就是4000起~7000左右，上万并发， 瞬间就会让Mysql服务器的cpu，硬盘全部打满，容易崩溃，所以我们在高并发场景下，会...</div></div></div></a><a class="pagination-related" href="/2025/10/20/%E7%A7%92%E6%9D%80/" title="秒杀"><img class="cover" src="/img/3.jpeg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">秒杀</div></div><div class="info-2"><div class="info-item-1">3、优惠卷秒杀3.1 -全局唯一ID每个店铺都可以发布优惠券：  当用户抢购时，就会生成订单并保存到tb_voucher_order这张表中，而订单表如果使用数据库自增ID就存在一些问题：  id的规律性太明显 受单表数据量的限制  场景分析：如果我们的id具有太明显的规则，用户或者说商业对手很容易猜测出来我们的一些敏感信息，比如商城在一天时间内，卖出了多少单，这明显不合适。 场景分析二：随着我们商城规模越来越大，mysql的单表的容量不宜超过500W，数据量过大之后，我们要进行拆库拆表，但拆分表了之后，他们从逻辑上讲他们是同一张表，所以他们的id是不能一样的， 于是乎我们需要保证id的唯一性。 全局ID生成器，是一种在分布式系统下用来生成全局唯一ID的工具，一般要满足下列特性：      UUID	MySQL8.0以后，UUID可以自增且减少了存储空间 Redis自增 snowflake算法     依赖于系统时间，需要机器间的时间一致 数据库自增     专门弄一个数据库表用于自增id的获取，类似Redis，但是性能差于redis   为了增加ID的安全性，我们可以不直接使用...</div></div></div></a><a class="pagination-related" href="/2025/10/20/%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5/" title="缓存策略"><img class="cover" src="/img/1.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">缓存策略</div></div><div class="info-2"><div class="info-item-1">2、商户查询缓存2.1 什么是缓存?前言:什么是缓存? 就像自行车,越野车的避震器 举个例子:越野车,山地自行车,都拥有”避震器”,防止车体加速后因惯性,在酷似”U”字母的地形上飞跃,硬着陆导致的损害,像个弹簧一样; 同样,实际开发中,系统也需要”避震器”,防止过高的数据访问猛冲系统,导致其操作线程无法及时处理信息而瘫痪; 这在实际开发中对企业讲,对产品口碑,用户评价都是致命的;所以企业非常重视缓存技术; 缓存(Cache),就是数据交换的缓冲区,俗称的缓存就是缓冲区内的数据,一般从数据库中获取,存储于本地代码(例如: 12345例1:Static final ConcurrentHashMap&lt;K,V&gt; map = new ConcurrentHashMap&lt;&gt;(); 本地用于高并发例2:static final Cache&lt;K,V&gt; USER_CACHE = CacheBuilder.newBuilder().build(); 用于redis等缓存例3:Static final Map&lt;K,V&gt; map =  new HashM...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/butterfly-icon.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">朝永</div><div class="author-info-description">一个记录代码与思考的地方</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">6</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">4</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">1</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">Redis 单线程是什么意思？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%87%E7%94%A8%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%EF%BC%9F%E6%9C%89%E4%BB%80%E4%B9%88%E5%A5%BD%E5%A4%84%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">为什么采用单线程模型？有什么好处？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%9E%81%E9%AB%98%E7%9A%84%E6%80%A7%E8%83%BD%E5%92%8C%E4%BD%8E%E5%BB%B6%E8%BF%9F"><span class="toc-number">2.1.</span> <span class="toc-text">1. 极高的性能和低延迟</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E7%AE%80%E5%8D%95%E5%8F%AF%E9%9D%A0%EF%BC%8C%E6%98%93%E4%BA%8E%E7%BB%B4%E6%8A%A4"><span class="toc-number">2.2.</span> <span class="toc-text">2. 简单可靠，易于维护</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%A4%A9%E7%84%B6%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7%E6%93%8D%E4%BD%9C"><span class="toc-number">2.3.</span> <span class="toc-text">3. 天然的原子性操作</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="toc-number">3.</span> <span class="toc-text">单线程模型的缺点</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E6%97%A0%E6%B3%95%E5%85%85%E5%88%86%E5%88%A9%E7%94%A8%E5%A4%9A%E6%A0%B8-CPU"><span class="toc-number">3.1.</span> <span class="toc-text">1. 无法充分利用多核 CPU</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E5%AE%B9%E6%98%93%E5%8F%97%E5%88%B0%E6%85%A2%E6%9F%A5%E8%AF%A2%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="toc-number">3.2.</span> <span class="toc-text">2. 容易受到慢查询的影响</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-6-0-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%BD%91%E7%BB%9C-I-O"><span class="toc-number">4.</span> <span class="toc-text">Redis 6.0 之后的多线程网络 I&#x2F;O</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">5.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%EF%BC%9A%E5%8D%95%E7%BA%BF%E7%A8%8B-vs-%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="toc-number">6.</span> <span class="toc-text">核心概念：单线程 vs 多线程</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%EF%BC%9F"><span class="toc-number">6.1.</span> <span class="toc-text">什么是单线程？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E5%A4%9A%E7%BA%BF%E7%A8%8B%EF%BC%9F"><span class="toc-number">6.2.</span> <span class="toc-text">什么是多线程？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5-Java-%E4%B8%BA%E4%BE%8B%EF%BC%88%E5%85%B8%E5%9E%8B%E7%9A%84%E5%A4%9A%E7%BA%BF%E7%A8%8B%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">以 Java 为例（典型的多线程）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BB%A5-Redis-%E4%B8%BA%E4%BE%8B%EF%BC%88%E7%89%B9%E6%AE%8A%E7%9A%84%E5%8D%95%E7%BA%BF%E7%A8%8B%EF%BC%89"><span class="toc-number">8.</span> <span class="toc-text">以 Redis 为例（特殊的单线程）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E5%AF%B9%E6%AF%94"><span class="toc-number">9.</span> <span class="toc-text">总结对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">10.</span> <span class="toc-text">1. 原子操作是什么？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E6%80%8E%E4%B9%88%E5%88%A4%E6%96%AD%E4%B8%80%E4%B8%AA%E6%93%8D%E4%BD%9C%E6%98%AF%E4%B8%8D%E6%98%AF%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">11.</span> <span class="toc-text">2. 怎么判断一个操作是不是原子操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%BA%E4%BB%80%E4%B9%88-count-%E4%B8%8D%E6%98%AF%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">12.</span> <span class="toc-text">3. 为什么 count++ 不是原子操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E8%AE%A9-count-%E5%8F%98%E6%88%90%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number">13.</span> <span class="toc-text">如何让 count++ 变成原子操作？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-1"><span class="toc-number">14.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E7%AD%94%E6%A1%88"><span class="toc-number">15.</span> <span class="toc-text">核心答案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AF%A6%E7%BB%86%E8%A7%A3%E9%87%8A"><span class="toc-number">16.</span> <span class="toc-text">详细解释</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E4%B8%BA%E4%BB%80%E4%B9%88-Redis-%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E4%B8%8B%E2%80%9C%E5%A4%A9%E7%84%B6%E2%80%9D%E5%85%B7%E5%A4%87%E5%8E%9F%E5%AD%90%E6%80%A7%EF%BC%9F"><span class="toc-number">16.1.</span> <span class="toc-text">1. 为什么 Redis 单线程模型下“天然”具备原子性？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-Redis-%E4%B8%AD%E2%80%9C%E5%8E%9F%E5%AD%90%E6%80%A7%E2%80%9D%E7%9A%84%E7%89%B9%E6%AE%8A%E5%90%AB%E4%B9%89"><span class="toc-number">16.2.</span> <span class="toc-text">2. Redis 中“原子性”的特殊含义</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-Redis-%E4%B8%AD%E9%9C%80%E8%A6%81%E8%AE%A8%E8%AE%BA%E2%80%9C%E5%8E%9F%E5%AD%90%E6%80%A7%E2%80%9D%E7%9A%84%E8%BE%B9%E7%95%8C%E6%83%85%E5%86%B5"><span class="toc-number">16.3.</span> <span class="toc-text">3. Redis 中需要讨论“原子性”的边界情况</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E5%AF%B9%E6%AF%94-1"><span class="toc-number">17.</span> <span class="toc-text">总结对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AF%94%E5%96%BB%EF%BC%9A%E9%93%B6%E8%A1%8C%E6%9F%9C%E5%8F%B0"><span class="toc-number">18.</span> <span class="toc-text">比喻：银行柜台</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%B7%A5%E4%BD%9C%E6%B5%81%E7%A8%8B%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84%EF%BC%9A"><span class="toc-number">19.</span> <span class="toc-text">工作流程是这样的：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%98%AF%E2%80%9C%E4%B8%80%E4%B8%AA%E5%91%BD%E4%BB%A4%E4%B8%80%E4%B8%AA%E7%BA%BF%E7%A8%8B%E2%80%9D%EF%BC%9F"><span class="toc-number">20.</span> <span class="toc-text">为什么不能是“一个命令一个线程”？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-6-0-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%A4%9A%E7%BA%BF%E7%A8%8B%E6%98%AF%E6%80%8E%E4%B9%88%E5%9B%9E%E4%BA%8B%EF%BC%9F"><span class="toc-number">21.</span> <span class="toc-text">Redis 6.0 之后的多线程是怎么回事？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-2"><span class="toc-number">22.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E4%B8%80%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88-GET-%E8%AE%A1%E7%AE%97-SET-%E4%B8%8D%E5%AE%89%E5%85%A8%EF%BC%9F%E4%B8%8D%E6%98%AF%E9%A1%BA%E5%BA%8F%E6%89%A7%E8%A1%8C%E5%90%97%EF%BC%9F"><span class="toc-number">23.</span> <span class="toc-text">问题一：为什么 GET -&gt; 计算 -&gt; SET 不安全？不是顺序执行吗？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E4%BA%8C%EF%BC%9ALua%E8%84%9A%E6%9C%AC%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8A%E6%94%BE%E9%94%81%E4%B9%9F%E9%9C%80%E8%A6%81%E7%94%A8Lua%EF%BC%9F"><span class="toc-number">24.</span> <span class="toc-text">问题二：Lua脚本解决了什么？为什么释放锁也需要用Lua？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Lua%E8%84%9A%E6%9C%AC%E8%A7%A3%E5%86%B3%E4%BA%86%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">24.1.</span> <span class="toc-text">Lua脚本解决了什么？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%87%8A%E6%94%BE%E9%94%81%E4%B9%9F%E9%9C%80%E8%A6%81%E7%94%A8Lua%EF%BC%9F%EF%BC%88%E5%8D%B3%E4%BD%BF%E5%8F%AA%E6%9C%89%E4%B8%80%E6%9D%A1%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="toc-number">24.2.</span> <span class="toc-text">为什么释放锁也需要用Lua？（即使只有一条命令）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-3"><span class="toc-number">25.</span> <span class="toc-text">总结</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E9%97%AE%E9%A2%98%EF%BC%9ARedis%E7%9A%84%E5%8D%95%E7%BA%BF%E7%A8%8B-vs-%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%9A%84%E5%B9%B6%E5%8F%91"><span class="toc-number"></span> <span class="toc-text">核心问题：Redis的单线程 vs 客户端的并发</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9C%BA%E6%99%AF%EF%BC%9A%E4%B8%A4%E4%B8%AA%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%90%8C%E6%97%B6%E6%89%A7%E8%A1%8C%E8%AE%A1%E6%95%B0%E5%99%A8%E5%A2%9E%E5%8A%A0"><span class="toc-number">1.</span> <span class="toc-text">场景：两个客户端同时执行计数器增加</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%AE%9E%E9%99%85%E5%8F%91%E7%94%9F%E7%9A%84%E6%97%B6%E9%97%B4%E7%BA%BF%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">实际发生的时间线：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">问题分析：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%AF%B4%E8%BF%99%E4%B8%8D%E6%98%AF%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">为什么说这不是原子操作？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E5%85%A8%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="toc-number"></span> <span class="toc-text">安全的解决方案</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%881%EF%BC%9A%E4%BD%BF%E7%94%A8INCR%E5%91%BD%E4%BB%A4%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">方案1：使用INCR命令（推荐）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%882%EF%BC%9A%E4%BD%BF%E7%94%A8Lua%E8%84%9A%E6%9C%AC"><span class="toc-number">2.</span> <span class="toc-text">方案2：使用Lua脚本</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%B9%E6%A1%883%EF%BC%9A%E4%BD%BF%E7%94%A8WATCH-MULTI-EXEC%EF%BC%88%E4%B9%90%E8%A7%82%E9%94%81%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">方案3：使用WATCH&#x2F;MULTI&#x2F;EXEC（乐观锁）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-4"><span class="toc-number"></span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E7%B1%BB%E6%AF%94%EF%BC%9A%E9%A4%90%E5%8E%85%E5%8E%A8%E6%88%BF"><span class="toc-number"></span> <span class="toc-text">核心类比：餐厅厨房</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88Redis%E8%A6%81%E8%87%AA%E5%B7%B1%E5%A4%84%E7%90%86%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">为什么Redis要自己处理网络请求？</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%A7%E8%83%BD%E8%80%83%E9%87%8F%EF%BC%9A%E9%81%BF%E5%85%8D%E4%B8%AD%E9%97%B4%E5%B1%82%E5%BC%80%E9%94%80"><span class="toc-number">1.</span> <span class="toc-text">1. 性能考量：避免中间层开销</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8D%8F%E8%AE%AE%E4%BC%98%E5%8C%96%EF%BC%9ARedis%E5%8D%8F%E8%AE%AE%E6%9E%81%E5%85%B6%E7%AE%80%E5%8D%95"><span class="toc-number">2.</span> <span class="toc-text">2. 协议优化：Redis协议极其简单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E5%8D%95%E7%BA%BF%E7%A8%8B%E6%A8%A1%E5%9E%8B%E7%9A%84%E5%AE%8C%E7%BE%8E%E5%8C%B9%E9%85%8D"><span class="toc-number">3.</span> <span class="toc-text">3. 单线程模型的完美匹配</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E7%8E%B0%E5%AE%9E%E4%B8%96%E7%95%8C%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number"></span> <span class="toc-text">现实世界的对比</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Redis%E7%9A%84%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84%E6%BC%94%E8%BF%9B"><span class="toc-number"></span> <span class="toc-text">Redis的网络架构演进</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-6-0-%E4%B9%8B%E5%89%8D%EF%BC%9A%E7%BA%AF%E5%8D%95%E7%BA%BF%E7%A8%8B%E5%A4%84%E7%90%86%E4%B8%80%E5%88%87"><span class="toc-number">1.</span> <span class="toc-text">Redis 6.0 之前：纯单线程处理一切</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-6-0-%E4%B9%8B%E5%90%8E%EF%BC%9A%E7%BD%91%E7%BB%9CI-O%E5%A4%9A%E7%BA%BF%E7%A8%8B%E5%8C%96"><span class="toc-number">2.</span> <span class="toc-text">Redis 6.0 之后：网络I&#x2F;O多线程化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E8%83%BD%E6%8A%8A%E7%BD%91%E7%BB%9C%E5%92%8C%E5%A4%84%E7%90%86%E5%88%86%E5%BC%80%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">为什么不能把网络和处理分开？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93-5"><span class="toc-number"></span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%A0%B8%E5%BF%83%E6%AF%94%E5%96%BB%EF%BC%9A%E8%B6%85%E5%B8%82%E6%94%B6%E9%93%B6%E5%8F%B0"><span class="toc-number"></span> <span class="toc-text">核心比喻：超市收银台</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-6-0-%E4%B9%8B%E5%89%8D%EF%BC%88%E6%97%A0%E7%BD%91%E7%BB%9CI-O%E5%A4%9A%E7%BA%BF%E7%A8%8B%EF%BC%89%EF%BC%9A"><span class="toc-number">1.</span> <span class="toc-text">Redis 6.0 之前（无网络I&#x2F;O多线程）：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Redis-6-0-%E4%B9%8B%E5%90%8E%EF%BC%88%E6%9C%89%E7%BD%91%E7%BB%9CI-O%E5%A4%9A%E7%BA%BF%E7%A8%8B%EF%BC%89%EF%BC%9A"><span class="toc-number">2.</span> <span class="toc-text">Redis 6.0 之后（有网络I&#x2F;O多线程）：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%E7%9A%84%E7%9C%9F%E6%AD%A3%E6%9D%A5%E6%BA%90"><span class="toc-number"></span> <span class="toc-text">并发问题的真正来源</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%BF%99%E4%B8%8E%E7%BD%91%E7%BB%9CI-O%E5%A4%9A%E7%BA%BF%E7%A8%8B%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="toc-number"></span> <span class="toc-text">这与网络I&#x2F;O多线程的关系</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Lua%E8%84%9A%E6%9C%AC%E5%A6%82%E4%BD%95%E8%A7%A3%E5%86%B3%E8%BF%99%E4%B8%AA%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="toc-number"></span> <span class="toc-text">Lua脚本如何解决这个问题？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E6%BE%84%E6%B8%85"><span class="toc-number"></span> <span class="toc-text">总结澄清</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5%E7%BB%88%E6%9E%81%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">一、核心概念终极总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%8D%95%E7%BA%BF%E7%A8%8B-vs-%E5%A4%9A%E7%BA%BF%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">1. 单线程 vs 多线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-number">2.</span> <span class="toc-text">2. 原子性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Redis%E7%9A%84%E7%8B%AC%E7%89%B9%E6%9E%B6%E6%9E%84"><span class="toc-number">3.</span> <span class="toc-text">3. Redis的独特架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E9%99%B7%E9%98%B1%E6%80%BB%E7%BB%93"><span class="toc-number"></span> <span class="toc-text">二、常见问题与陷阱总结</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E2%80%9Ccount-%E4%B8%BA%E4%BB%80%E4%B9%88%E4%B8%8D%E6%98%AF%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%EF%BC%9F%E2%80%9D"><span class="toc-number">1.</span> <span class="toc-text">1. “count++为什么不是原子操作？”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E2%80%9CRedis%E5%8D%95%E7%BA%BF%E7%A8%8B%E4%B8%BA%E4%BB%80%E4%B9%88%E8%BF%98%E6%9C%89%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%EF%BC%9F%E2%80%9D"><span class="toc-number">2.</span> <span class="toc-text">2. “Redis单线程为什么还有并发问题？”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E2%80%9CRedis%E7%BD%91%E7%BB%9CI-O%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%BC%9A%E5%AF%BC%E8%87%B4%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%E5%90%97%EF%BC%9F%E2%80%9D"><span class="toc-number">3.</span> <span class="toc-text">3. “Redis网络I&#x2F;O多线程会导致并发问题吗？”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E2%80%9C%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E9%9C%80%E8%A6%81%E7%94%A8Lua%E8%84%9A%E6%9C%AC%EF%BC%9F%E2%80%9D"><span class="toc-number">4.</span> <span class="toc-text">4. “什么时候需要用Lua脚本？”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E2%80%9C%E5%8D%95%E4%B8%AARedis%E5%91%BD%E4%BB%A4%E6%80%BB%E6%98%AF%E5%AE%89%E5%85%A8%E7%9A%84%E5%90%97%EF%BC%9F%E2%80%9D"><span class="toc-number">5.</span> <span class="toc-text">5. “单个Redis命令总是安全的吗？”</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%BF%9B%E9%98%B6%E9%97%AE%E9%A2%98%E4%B8%8E%E6%89%A9%E5%B1%95%E6%80%9D%E8%80%83"><span class="toc-number"></span> <span class="toc-text">三、进阶问题与扩展思考</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%80%A7%E8%83%BD%E8%BE%B9%E7%95%8C%E9%97%AE%E9%A2%98"><span class="toc-number">1.</span> <span class="toc-text">1. 性能边界问题</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83%E4%B8%8B%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7"><span class="toc-number">2.</span> <span class="toc-text">2. 集群环境下的原子性</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E4%B8%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="toc-number">3.</span> <span class="toc-text">3. 与数据库的对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-%E5%AE%9E%E9%99%85%E5%BC%80%E5%8F%91%E4%B8%AD%E7%9A%84%E5%9D%91"><span class="toc-number">4.</span> <span class="toc-text">4. 实际开发中的坑</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%E6%A8%A1%E5%BC%8F"><span class="toc-number">5.</span> <span class="toc-text">5. 解决方案模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%A0%B8%E5%BF%83%E8%A6%81%E7%82%B9%E8%AE%B0%E5%BF%86%E5%8F%A3%E8%AF%80"><span class="toc-number"></span> <span class="toc-text">四、核心要点记忆口诀</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%9D%A2%E8%AF%95%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%B8%85%E5%8D%95"><span class="toc-number"></span> <span class="toc-text">五、面试常见问题清单</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E5%A4%9A%E8%BF%9B%E7%A8%8B"><span class="toc-number">1.</span> <span class="toc-text">1. 多进程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-%E5%BC%82%E6%AD%A5%E7%BC%96%E7%A8%8B-%E5%9F%BA%E4%BA%8E%E4%BA%8B%E4%BB%B6%E7%9A%84%E5%B9%B6%E5%8F%91"><span class="toc-number">2.</span> <span class="toc-text">2. 异步编程 &#x2F; 基于事件的并发</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-%E7%BB%BF%E8%89%B2%E7%BA%BF%E7%A8%8B-%E7%94%A8%E6%88%B7%E6%80%81%E7%BA%BF%E7%A8%8B"><span class="toc-number">3.</span> <span class="toc-text">3. 绿色线程 &#x2F; 用户态线程</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%E4%B8%8E%E5%AF%B9%E6%AF%94"><span class="toc-number">4.</span> <span class="toc-text">总结与对比</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%A6%82%E4%BD%95%E9%80%89%E6%8B%A9%EF%BC%9F"><span class="toc-number">5.</span> <span class="toc-text">如何选择？</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2025/10/20/redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%8E%9F%E7%90%86%20%20/" title="redisson分布式锁"><img src="/img/6.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redisson分布式锁"/></a><div class="content"><a class="title" href="/2025/10/20/redisson%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81%E7%9A%84%E5%8E%9F%E7%90%86%20%20/" title="redisson分布式锁">redisson分布式锁</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/20/redis%E7%9B%B8%E5%85%B3%E7%9A%84%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/" title="redis"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis"/></a><div class="content"><a class="title" href="/2025/10/20/redis%E7%9B%B8%E5%85%B3%E7%9A%84%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/" title="redis">redis</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/20/%E7%9F%AD%E4%BF%A1%E7%99%BB%E5%BD%95/" title="短信登录"><img src="/img/2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="短信登录"/></a><div class="content"><a class="title" href="/2025/10/20/%E7%9F%AD%E4%BF%A1%E7%99%BB%E5%BD%95/" title="短信登录">短信登录</a><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/20/%E7%A7%92%E6%9D%80/" title="秒杀"><img src="/img/3.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="秒杀"/></a><div class="content"><a class="title" href="/2025/10/20/%E7%A7%92%E6%9D%80/" title="秒杀">秒杀</a><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2025/10/20/%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5/" title="缓存策略"><img src="/img/1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存策略"/></a><div class="content"><a class="title" href="/2025/10/20/%E7%BC%93%E5%AD%98%E7%AD%96%E7%95%A5/" title="缓存策略">缓存策略</a><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By 朝永</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
