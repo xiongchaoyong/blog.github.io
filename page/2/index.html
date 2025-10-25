@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>朝永的博客 - 技术·思考·生活</title><meta name="author" content="朝永"><meta name="copyright" content="朝永"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="一个记录代码与思考的地方">
+<meta property="og:type" content="website">
+<meta property="og:title" content="朝永的博客">
+<meta property="og:url" content="https://xiongchaoyong.github.io/page/2/index.html">
+<meta property="og:site_name" content="朝永的博客">
+<meta property="og:description" content="一个记录代码与思考的地方">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiongchaoyong.github.io/img/qq%E5%A4%B4%E5%83%8F.jpg">
+<meta property="article:author" content="朝永">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiongchaoyong.github.io/img/qq%E5%A4%B4%E5%83%8F.jpg"><script type="application/ld+json"></script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xiongchaoyong.github.io/page/2/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '朝永的博客',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 8.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/qq%E5%A4%B4%E5%83%8F.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/3.jpeg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">朝永的博客</span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">朝永的博客</h1></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover left"><a href="/posts/2d8be47d.html" title="登录注册优化"><img class="post-bg" src="/img/1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="登录注册优化"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/2d8be47d.html" title="登录注册优化">登录注册优化</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/blog/">blog</a></span></div><div class="content">1UserLoginVO userLoginVO=UserLoginVO.builder().id(userInfo.getId()).token(token).build();  注册并发问题原来实现，存在并发问题，多个线程同时拿到相同的count 12345678910111213@Overridepublic void register(UserRegisterDTO userRegisterDto) &#123;    //设置账号    Long count=userMapper.getUserTotal();    String account=String.format(&quot;%06d&quot;, count+1);    userRegisterDto.setAccount(account);    try &#123;        userMapper.register(userRegisterDto);    &#125;    catch (Exception e)&#123;        throw new BaseException(&quo...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/posts/bb426678.html" title="短信登录"><img class="post-bg" src="/img/2.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="短信登录"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/bb426678.html" title="短信登录">短信登录</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/redis/">redis</a></span></div><div class="content">1、短信登录1.1、导入黑马点评项目1.1.1 、导入SQL 1.1.2、有关当前模型手机或者app端发起请求，请求我们的nginx服务器，nginx基于七层模型走的事HTTP协议，可以实现基于Lua直接绕开tomcat访问redis，也可以作为静态资源服务器，轻松扛下上万并发， 负载均衡到下游tomcat服务器，打散流量，我们都知道一台4核8G的tomcat，在优化和处理简单业务的加持下，大不了就处理1000左右的并发， 经过nginx的负载均衡分流后，利用集群支撑起整个项目，同时nginx在部署了前端项目后，更是可以做到动静分离，进一步降低tomcat服务的压力，这些功能都得靠nginx起作用，所以nginx是整个项目中重要的一环。 在tomcat支撑起并发流量后，我们如果让tomcat直接去访问Mysql，根据经验Mysql企业级服务器只要上点并发，一般是16或32 核心cpu，32 或64G内存，像企业级mysql加上固态硬盘能够支撑的并发，大概就是4000起~7000左右，上万并发， 瞬间就会让Mysql服务器的cpu，硬盘全部打满，容易崩溃，所以我们在高并发场景下，会...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/posts/ebf53b55.html" title="秒杀"><img class="post-bg" src="/img/3.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="秒杀"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/ebf53b55.html" title="秒杀">秒杀</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/redis/">redis</a></span></div><div class="content">3、优惠卷秒杀3.1 -全局唯一ID每个店铺都可以发布优惠券：  当用户抢购时，就会生成订单并保存到tb_voucher_order这张表中，而订单表如果使用数据库自增ID就存在一些问题：  id的规律性太明显 受单表数据量的限制  场景分析：如果我们的id具有太明显的规则，用户或者说商业对手很容易猜测出来我们的一些敏感信息，比如商城在一天时间内，卖出了多少单，这明显不合适。 场景分析二：随着我们商城规模越来越大，mysql的单表的容量不宜超过500W，数据量过大之后，我们要进行拆库拆表，但拆分表了之后，他们从逻辑上讲他们是同一张表，所以他们的id是不能一样的， 于是乎我们需要保证id的唯一性。 全局ID生成器，是一种在分布式系统下用来生成全局唯一ID的工具，一般要满足下列特性：      UUID	MySQL8.0以后，UUID可以自增且减少了存储空间 Redis自增 snowflake算法     依赖于系统时间，需要机器间的时间一致 数据库自增     专门弄一个数据库表用于自增id的获取，类似Redis，但是性能差于redis   为了增加ID的安全性，我们可以不直接使用...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/posts/faa6226c.html" title="达人探店"><img class="post-bg" src="/img/1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="达人探店"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/faa6226c.html" title="达人探店">达人探店</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/redis/">redis</a></span></div><div class="content">8、达人探店8.1、达人探店-发布探店笔记发布探店笔记 探店笔记类似点评网站的评价，往往是图文结合。对应的表有两个：tb_blog：探店笔记表，包含笔记中的标题、文字、图片等tb_blog_comments：其他用户对探店笔记的评价 具体发布流程  上传接口 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849@Slf4j@RestController@RequestMapping(&quot;upload&quot;)public class UploadController &#123;    @PostMapping(&quot;blog&quot;)    public Result uploadImage(@RequestParam(&quot;file&quot;) MultipartFile image) &#123;        try &#123;            // 获取原始文件名称            String ori...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/posts/b8e1dc7c.html" title="缓存策略"><img class="post-bg" src="/img/1.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="缓存策略"></a></div><div class="recent-post-info"><a class="article-title" href="/posts/b8e1dc7c.html" title="缓存策略">缓存策略</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2025-10-20T06:45:00.000Z" title="发表于 2025-10-20 14:45:00">2025-10-20</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/redis/">redis</a></span></div><div class="content">2、商户查询缓存2.1 什么是缓存?前言:什么是缓存?  就像自行车,越野车的避震器 举个例子:越野车,山地自行车,都拥有”避震器”,防止车体加速后因惯性,在酷似”U”字母的地形上飞跃,硬着陆导致的损害,像个弹簧一样; 同样,实际开发中,系统也需要”避震器”,防止过高的数据访问猛冲系统,导致其操作线程无法及时处理信息而瘫痪; 这在实际开发中对企业讲,对产品口碑,用户评价都是致命的;所以企业非常重视缓存技术; 缓存(Cache),就是数据交换的缓冲区,俗称的缓存就是缓冲区内的数据,一般从数据库中获取,存储于本地代码(例如: 12345例1:Static final ConcurrentHashMap&lt;K,V&gt; map = new ConcurrentHashMap&lt;&gt;(); 本地用于高并发例2:static final Cache&lt;K,V&gt; USER_CACHE = CacheBuilder.newBuilder().build(); 用于redis等缓存例3:Static final Map&lt;K,V&gt; map =  new Hash...</div></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/qq%E5%A4%B4%E5%83%8F.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">朝永</div><div class="author-info-description">一个记录代码与思考的地方</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/7b25d017.html" title="redis"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis"/></a><div class="content"><a class="title" href="/posts/7b25d017.html" title="redis">redis</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/df28a7c5.html" title="博客优化"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="博客优化"/></a><div class="content"><a class="title" href="/posts/df28a7c5.html" title="博客优化">博客优化</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6930f7b7.html" title="工具类规范"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="工具类规范"/></a><div class="content"><a class="title" href="/posts/6930f7b7.html" title="工具类规范">工具类规范</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/72d93c66.html" title="请求方式总结"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="请求方式总结"/></a><div class="content"><a class="title" href="/posts/72d93c66.html" title="请求方式总结">请求方式总结</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/c2a288e.html" title="static深入理解"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="static深入理解"/></a><div class="content"><a class="title" href="/posts/c2a288e.html" title="static深入理解">static深入理解</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/blog/"><span class="card-category-list-name">blog</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/redis/"><span class="card-category-list-name">redis</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/"><span class="card-category-list-name">小知识点</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/%E8%AF%BE%E7%A8%8B%E5%AD%A6%E4%B9%A0/"><span class="card-category-list-name">课程学习</span><span class="card-category-list-count">2</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/%E6%80%9D%E8%80%83/" style="font-size: 1.5em; color: #99a9bf">思考</a> <a href="/tags/%E6%AF%9B%E6%A6%82/" style="font-size: 1.1em; color: #999">毛概</a> <a href="/tags/blog/" style="font-size: 1.1em; color: #999">blog</a> <a href="/tags/%E5%8D%9A%E5%AE%A2/" style="font-size: 1.1em; color: #999">博客</a> <a href="/tags/%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/" style="font-size: 1.37em; color: #99a4b2">头脑风暴</a> <a href="/tags/%E9%BB%91%E9%A9%AC/" style="font-size: 1.23em; color: #999ea6">黑马</a> <a href="/tags/redis/" style="font-size: 1.37em; color: #99a4b2">redis</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2025/10/">
+            <span class="card-archive-list-date">
+              十月 2025
+            </span>
+            <span class="card-archive-list-count">15</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">15</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2025-10-25T04:35:39.181Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By 朝永</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

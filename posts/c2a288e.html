@@ -1,0 +1,419 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>static深入理解 | 朝永的博客</title><meta name="author" content="朝永"><meta name="copyright" content="朝永"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="自动注入原理解析">
+<meta property="og:type" content="article">
+<meta property="og:title" content="static深入理解">
+<meta property="og:url" content="https://xiongchaoyong.github.io/posts/c2a288e.html">
+<meta property="og:site_name" content="朝永的博客">
+<meta property="og:description" content="自动注入原理解析">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://xiongchaoyong.github.io/img/5.png">
+<meta property="article:published_time" content="2025-10-20T06:55:00.000Z">
+<meta property="article:modified_time" content="2025-10-25T04:35:11.341Z">
+<meta property="article:author" content="朝永">
+<meta property="article:tag" content="头脑风暴">
+<meta property="article:tag" content="思考">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://xiongchaoyong.github.io/img/5.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "static深入理解",
+  "url": "https://xiongchaoyong.github.io/posts/c2a288e.html",
+  "image": "https://xiongchaoyong.github.io/img/5.png",
+  "datePublished": "2025-10-20T06:55:00.000Z",
+  "dateModified": "2025-10-25T04:35:11.341Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "朝永",
+      "url": "https://xiongchaoyong.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://xiongchaoyong.github.io/posts/c2a288e.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.1"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.12.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'static深入理解',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 8.0.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/qq%E5%A4%B4%E5%83%8F.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/5.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">朝永的博客</span></a><a class="nav-page-title" href="/"><span class="site-name">static深入理解</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/gallery/"><i class="fa-fw fas fa-solid fa-image"></i><span> 相册</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">static深入理解</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2025-10-25T04:35:11.341Z" title="更新于 2025-10-25 12:35:11">2025-10-25</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%B0%8F%E7%9F%A5%E8%AF%86%E7%82%B9/">小知识点</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="static"><a href="#static" class="headerlink" title="static"></a>static</h1><p>我想要知道java中的static所有相关的知识点，为什么要设计static，怎么运用static，运用static需要注意什么</p>
+<p>好的，这是一个非常核心的Java问题。我将为你系统地梳理<code>static</code>关键字的所有知识点，从设计目的到使用细节和注意事项。</p>
+<hr>
+<h3 id="一、为什么要设计-static？"><a href="#一、为什么要设计-static？" class="headerlink" title="一、为什么要设计 static？"></a>一、为什么要设计 <code>static</code>？</h3><p>Java设计<code>static</code>关键字的核心目的是<strong>标识出那些属于类本身，而不依赖于任何特定类实例（对象）的成员</strong>。</p>
+<p>可以想象一个班级（Class）和学生（Object）的关系：</p>
+<ul>
+<li>每个学生都有自己的<strong>姓名</strong>、<strong>学号</strong>（这些是<strong>实例变量</strong>）。</li>
+<li>但所有学生共享同一个<strong>班级名称</strong>、<strong>班主任</strong>的名字，或者一个共享的<strong>班级人数计数器</strong>（这些就应该是<code>static</code>的，属于类本身）。</li>
+</ul>
+<p><strong>设计初衷：</strong></p>
+<ol>
+<li><strong>节省内存</strong>：对于所有对象共享的数据（如常量、配置信息），如果在每个对象中都存一份，会造成大量冗余。将其声明为<code>static</code>，只在内存中存一份，所有对象共享。</li>
+<li><strong>功能独立性</strong>：有些方法（如工具类方法<code>Math.sqrt()</code>）的执行不需要对象的状态，其逻辑是独立的。将这些方法声明为<code>static</code>，可以直接通过类名调用，无需创建对象，更加方便和符合逻辑。</li>
+<li><strong>共享数据与通信</strong>：提供一个在类的所有实例之间共享数据和通信的机制（如上述的计数器）。</li>
+</ol>
+<hr>
+<h3 id="二、static-可以修饰什么？怎么运用？"><a href="#二、static-可以修饰什么？怎么运用？" class="headerlink" title="二、static 可以修饰什么？怎么运用？"></a>二、<code>static</code> 可以修饰什么？怎么运用？</h3><p><code>static</code>可以用来修饰：<strong>变量</strong>、<strong>方法</strong>、<strong>代码块</strong>和<strong>内部类</strong>。</p>
+<h4 id="1-静态变量（类变量）"><a href="#1-静态变量（类变量）" class="headerlink" title="1. 静态变量（类变量）"></a>1. 静态变量（类变量）</h4><ul>
+<li><p><strong>定义</strong>：使用<code>static</code>关键字修饰的变量。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>不属于任何实例对象，而是属于类。</li>
+<li>在JVM中，静态变量在<strong>方法区</strong>（JDK 8及以后在元空间&#x2F;堆中，具体取决于实现）中只为它分配一次内存。</li>
+<li>所有的对象实例都<strong>共享</strong>同一份静态变量。一个对象修改了它的值，其他所有对象都会看到这个改变。</li>
+<li>在类<strong>首次被加载</strong>时初始化。</li>
+</ul>
+</li>
+<li><p><strong>语法</strong>：</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class Student &#123;</span><br><span class="line">    // 实例变量，每个对象独享一份</span><br><span class="line">    private String name;</span><br><span class="line">    // 静态变量，所有对象共享一份</span><br><span class="line">    private static String className = &quot;高三一班&quot;;</span><br><span class="line">    // 静态常量，所有对象共享，且不可改变</span><br><span class="line">    public static final String SCHOOL_NAME = &quot;第一中学&quot;;</span><br><span class="line"></span><br><span class="line">    // ... 构造方法和其他方法</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>访问方式</strong>：</p>
+<ul>
+<li><strong>推荐方式</strong>：<code>类名.静态变量名</code> (例如：<code>Student.className</code>)</li>
+<li><strong>不推荐方式</strong>：<code>对象引用.静态变量名</code> (例如：<code>student1.className</code>)。虽然语法上允许，但容易让人误解为这是实例变量。</li>
+</ul>
+</li>
+</ul>
+<h4 id="2-静态方法（类方法）"><a href="#2-静态方法（类方法）" class="headerlink" title="2. 静态方法（类方法）"></a>2. 静态方法（类方法）</h4><ul>
+<li><p><strong>定义</strong>：使用<code>static</code>关键字修饰的方法。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>属于类，而不是类的对象。</li>
+<li>可以直接通过<strong>类名</strong>调用，而<strong>无需创建类的实例</strong>。</li>
+<li>静态方法内部<strong>不能直接访问</strong>类的非静态成员（变量和方法），只能直接访问其他的静态成员。因为它被调用时，可能还没有任何对象被创建。</li>
+<li>静态方法中**不能使用<code>this</code>和<code>super</code>**关键字。</li>
+</ul>
+</li>
+<li><p><strong>语法</strong>：</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class MathUtils &#123;</span><br><span class="line">    // 静态方法</span><br><span class="line">    public static int add(int a, int b) &#123;</span><br><span class="line">        return a + b;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    // 错误示例：静态方法中访问非静态变量</span><br><span class="line">    // private int instanceVar = 10;</span><br><span class="line">    // public static void printError() &#123;</span><br><span class="line">    //     System.out.println(instanceVar); // 编译错误！</span><br><span class="line">    // &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>调用方式</strong>：</p>
+<ul>
+<li><strong>推荐方式</strong>：<code>类名.静态方法名()</code> (例如：<code>MathUtils.add(5, 3)</code>)</li>
+<li><strong>不推荐方式</strong>：<code>对象引用.静态方法名()</code></li>
+</ul>
+</li>
+<li><p><strong>典型应用场景</strong>：</p>
+<ul>
+<li><strong>工具类</strong>：如<code>java.lang.Math</code>，<code>java.util.Arrays</code>。它们的方法都是静态的，我们直接使用<code>Math.pow()</code>，而不需要<code>new Math()</code>。</li>
+<li><strong>工厂方法</strong>：用于创建对象，例如<code>Integer.valueOf(String s)</code>。</li>
+<li><strong>辅助方法</strong>：与对象状态无关的帮助方法。</li>
+</ul>
+</li>
+</ul>
+<h4 id="3-静态代码块"><a href="#3-静态代码块" class="headerlink" title="3. 静态代码块"></a>3. 静态代码块</h4><ul>
+<li><p><strong>定义</strong>：使用<code>static</code>关键字修饰的代码块。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>用于<strong>初始化静态变量</strong>或执行<strong>只需进行一次的初始化操作</strong>。</li>
+<li>在<strong>类被加载时</strong>执行，并且<strong>只执行一次</strong>。</li>
+<li>执行顺序<strong>优先于</strong>实例代码块和构造方法。</li>
+<li>一个类中可以有多个静态代码块，按它们在代码中出现的顺序执行。</li>
+</ul>
+</li>
+<li><p><strong>语法</strong>：</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class DatabaseConnection &#123;</span><br><span class="line">    private static String config;</span><br><span class="line"></span><br><span class="line">    // 静态代码块</span><br><span class="line">    static &#123;</span><br><span class="line">        // 模拟从配置文件加载配置</span><br><span class="line">        config = loadConfigFromFile(&quot;db.properties&quot;);</span><br><span class="line">        System.out.println(&quot;静态代码块执行：数据库配置已加载。&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static String loadConfigFromFile(String file) &#123;</span><br><span class="line">        // ... 加载逻辑</span><br><span class="line">        return &quot;config_data&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="4-静态内部类"><a href="#4-静态内部类" class="headerlink" title="4. 静态内部类"></a>4. 静态内部类</h4><ul>
+<li><p><strong>定义</strong>：使用<code>static</code>关键字修饰的内部类（嵌套类）。</p>
+</li>
+<li><p><strong>特点</strong>：</p>
+<ul>
+<li>静态内部类不依赖于外部类的实例。你可以把它看作是外部类的一个静态成员。</li>
+<li>创建静态内部类对象时，<strong>不需要</strong>先创建外部类对象。</li>
+<li>静态内部类<strong>不能直接访问</strong>外部类的非静态成员（因为它没有外部类对象的引用）；它只能访问外部类的静态成员。</li>
+</ul>
+</li>
+<li><p><strong>语法</strong>：</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class OuterClass &#123;</span><br><span class="line">    private static String staticField = &quot;Static Field&quot;;</span><br><span class="line">    private String instanceField = &quot;Instance Field&quot;;</span><br><span class="line"></span><br><span class="line">    // 静态内部类</span><br><span class="line">    public static class StaticNestedClass &#123;</span><br><span class="line">        public void print() &#123;</span><br><span class="line">            System.out.println(staticField); // 可以访问外部类的静态成员</span><br><span class="line">            // System.out.println(instanceField); // 编译错误！不能访问非静态成员</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 使用方式</span><br><span class="line">OuterClass.StaticNestedClass nestedObject = new OuterClass.StaticNestedClass();</span><br><span class="line">nestedObject.print();</span><br></pre></td></tr></table></figure></li>
+</ul>
+<hr>
+<h3 id="三、运用-static-需要注意什么？（陷阱与最佳实践）"><a href="#三、运用-static-需要注意什么？（陷阱与最佳实践）" class="headerlink" title="三、运用 static 需要注意什么？（陷阱与最佳实践）"></a>三、运用 <code>static</code> 需要注意什么？（陷阱与最佳实践）</h3><ol>
+<li><p><strong>滥用静态变量导致数据不一致（线程不安全）</strong></p>
+<ul>
+<li>静态变量被所有实例共享，在<strong>多线程环境</strong>下，如果多个线程同时修改一个非原子的静态变量，会导致<strong>数据竞争</strong>和<strong>脏读</strong>。</li>
+<li><strong>解决方案</strong>：使用同步（<code>synchronized</code>）或使用<code>Atomic</code>类（如<code>AtomicInteger</code>），或者避免使用可变的静态状态。</li>
+</ul>
+</li>
+<li><p><strong>内存泄漏风险</strong></p>
+<ul>
+<li>静态变量的生命周期与类相同，即从类加载开始，到JVM结束。如果一个静态集合（如<code>static List</code>）持有大量对象的引用，并且这些对象不再需要，但由于被静态集合引用而无法被GC回收，就会导致内存泄漏。</li>
+<li><strong>解决方案</strong>：及时清理静态集合中不再需要的对象，或者使用<code>WeakReference</code>等。</li>
+</ul>
+</li>
+<li><p><strong>阻碍单元测试</strong></p>
+<ul>
+<li>代码中硬编码了对静态方法的调用（如<code>Utility.process(data)</code>），会使得代码紧密耦合，难以测试。因为你无法在测试中轻松地模拟（Mock）这个静态方法的行为。</li>
+<li><strong>解决方案</strong>：对于需要被模拟的依赖，尽量使用依赖注入（Dependency Injection）而非静态方法。如果必须使用，可以考虑使用PowerMock等高级Mock框架，但最好从设计上避免。</li>
+</ul>
+</li>
+<li><p><strong>破坏了面向对象的特性</strong></p>
+<ul>
+<li>过度使用静态方法，会写出“过程式”的代码，而不是面向对象的代码。它破坏了多态性，因为静态方法不能被重写（Override）。</li>
+</ul>
+</li>
+<li><p><strong>初始化顺序</strong></p>
+<ul>
+<li>要理解静态变量、静态代码块、实例变量、实例代码块和构造方法的初始化顺序：<br><strong>父类静态 -&gt; 子类静态 -&gt; 父类实例 -&gt; 父类构造 -&gt; 子类实例 -&gt; 子类构造</strong></li>
+<li>静态部分（变量和代码块）在类加载时按代码顺序初始化，且只执行一次。</li>
+</ul>
+</li>
+<li><p><strong>静态方法不能被重写</strong></p>
+<ul>
+<li>如果子类有一个与父类<strong>签名相同</strong>的静态方法，这叫做<strong>方法隐藏（Method Hiding）</strong>，不是重写。调用哪个方法取决于<strong>引用的类型</strong>，而不是实际对象的类型。</li>
+</ul>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">class Parent &#123;</span><br><span class="line">    static void method() &#123; System.out.println(&quot;Parent&quot;); &#125;</span><br><span class="line">&#125;</span><br><span class="line">class Child extends Parent &#123;</span><br><span class="line">    static void method() &#123; System.out.println(&quot;Child&quot;); &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Test &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        Parent p = new Child();</span><br><span class="line">        p.method(); // 输出 &quot;Parent&quot;，因为引用类型是Parent</span><br><span class="line">        Child.method(); // 输出 &quot;Child&quot;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><table>
+<thead>
+<tr>
+<th align="left">特性</th>
+<th align="left">归属</th>
+<th align="left">生命周期</th>
+<th align="left">访问限制</th>
+<th align="left">主要用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>静态变量</strong></td>
+<td align="left">类</td>
+<td align="left">类加载 ~ JVM结束</td>
+<td align="left">可访问静态成员</td>
+<td align="left">共享常量、共享配置、计数器</td>
+</tr>
+<tr>
+<td align="left"><strong>静态方法</strong></td>
+<td align="left">类</td>
+<td align="left">类加载 ~ JVM结束</td>
+<td align="left"><strong>只能</strong>直接访问静态成员</td>
+<td align="left">工具方法、工厂方法、不需要对象状态的操作</td>
+</tr>
+<tr>
+<td align="left"><strong>静态代码块</strong></td>
+<td align="left">类</td>
+<td align="left">类加载时执行一次</td>
+<td align="left">可访问静态成员</td>
+<td align="left">初始化静态变量、加载静态资源</td>
+</tr>
+<tr>
+<td align="left"><strong>静态内部类</strong></td>
+<td align="left">外部类</td>
+<td align="left">与普通类相同</td>
+<td align="left"><strong>只能</strong>直接访问外部类的静态成员</td>
+<td align="left">与外部类关联但不依赖其实例的辅助类</td>
+</tr>
+</tbody></table>
+<p><strong>核心思想</strong>：当你确定某个成员与类相关，而与类的任何特定对象无关时，就使用<code>static</code>。正确使用它可以提高效率和代码清晰度，但滥用则会带来耦合性、可测试性和线程安全等问题。</p>
+<p>在spring框架中需要注意什么</p>
+<p>好的，这个问题非常关键！在Spring框架中，使用<code>static</code>需要格外小心，因为Spring的核心设计理念是<strong>依赖注入（DI）<strong>和</strong>控制反转（IoC）</strong>，它们都是基于对象实例来工作的。滥用<code>static</code>会与这些理念背道而驰。</p>
+<p>以下是Spring框架中使用<code>static</code>时需要注意的关键点，我将它们分为几大类：</p>
+<hr>
+<h3 id="一、核心原则：Spring-IoC容器管不了”Static”"><a href="#一、核心原则：Spring-IoC容器管不了”Static”" class="headerlink" title="一、核心原则：Spring IoC容器管不了”Static”"></a>一、核心原则：Spring IoC容器管不了”Static”</h3><p>这是最根本的一点。Spring IoC容器负责管理的是<strong>对象实例（Bean）</strong> 的生命周期和依赖关系。而<code>static</code>成员属于<strong>类</strong>，它的生命周期不由Spring管理。</p>
+<ul>
+<li><strong>依赖注入失效</strong>：你不能使用<code>@Autowired</code>来注入一个静态字段&#x2F;方法。</li>
+<li><strong>AOP失效</strong>：Spring AOP（如事务管理<code>@Transactional</code>、日志切面等）是基于代理实现的，它只能作用于<strong>实例方法</strong>。对静态方法的调用会<strong>绕过代理</strong>，导致AOP相关功能全部失效。</li>
+</ul>
+<hr>
+<h3 id="二、具体场景与注意事项"><a href="#二、具体场景与注意事项" class="headerlink" title="二、具体场景与注意事项"></a>二、具体场景与注意事项</h3><h4 id="1-静态字段与依赖注入"><a href="#1-静态字段与依赖注入" class="headerlink" title="1. 静态字段与依赖注入"></a>1. 静态字段与依赖注入</h4><p><strong>错误示范：</strong></p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class MyService &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private static SomeRepository repository; // 这不会被注入！</span><br><span class="line">    </span><br><span class="line">    public static void someStaticMethod() &#123;</span><br><span class="line">        repository.doSomething(); // 这里会抛出 NullPointerException</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><code>repository</code>会是<code>null</code>，因为Spring不会为静态字段注入依赖。</p>
+<p><strong>解决方案：</strong><br>有几种方式，但都需要小心使用。</p>
+<p><strong>方案一（Setter注入 - 最常用）：</strong><br>通过一个非静态的setter方法，在Bean初始化时，将依赖设置到静态字段上。</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class MyService &#123;</span><br><span class="line"></span><br><span class="line">    private static SomeRepository staticRepository;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    public void setRepository(SomeRepository repository) &#123;</span><br><span class="line">        MyService.staticRepository = repository; // 在实例创建时赋值给静态变量</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void someStaticMethod() &#123;</span><br><span class="line">        staticRepository.doSomething(); // 现在可以安全使用了</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>方案二（<code>@PostConstruct</code>）：</strong><br>与Setter注入类似，但在初始化方法中完成。</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class MyService &#123;</span><br><span class="line"></span><br><span class="line">    private static SomeRepository staticRepository;</span><br><span class="line">    @Autowired</span><br><span class="line">    private SomeRepository repository; // 先注入到实例变量</span><br><span class="line"></span><br><span class="line">    @PostConstruct</span><br><span class="line">    public void init() &#123;</span><br><span class="line">        staticRepository = this.repository; // 再赋值给静态变量</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>重要警告</strong>：以上两种方案都有潜在问题。如果<code>MyService</code>是<strong>多例（prototype）</strong> 的，或者存在并发访问，可能会遇到线程安全问题或意外的覆盖。通常只建议在<strong>单例Bean</strong>中且依赖也是单例的情况下使用。</p>
+<h4 id="2-静态方法与AOP（如-Transactional）"><a href="#2-静态方法与AOP（如-Transactional）" class="headerlink" title="2. 静态方法与AOP（如@Transactional）"></a>2. 静态方法与AOP（如<code>@Transactional</code>）</h4><p><strong>严重错误示范：</strong></p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class OrderService &#123;</span><br><span class="line"></span><br><span class="line">    @Transactional // 这个注解将完全失效！</span><br><span class="line">    public static void createOrder() &#123;</span><br><span class="line">        // 数据库操作</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>当你调用<code>OrderService.createOrder()</code>时，<strong>事务不会开启</strong>。因为Spring通过创建<code>OrderService</code>的代理对象（如CGLIB代理）来管理事务，而对静态方法的调用是直接通过类进行的，绕过了代理对象。</p>
+<p><strong>解决方案：</strong><br><strong>绝对不要</strong>在静态方法上使用Spring AOP注解。如果需要静态方法具有事务性，必须重构代码，从静态方法内部调用一个实例方法。</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">@Service</span><br><span class="line">public class OrderService &#123;</span><br><span class="line"></span><br><span class="line">    // 通过一个静态的&quot;门面&quot;调用实例方法</span><br><span class="line">    private static OrderService instance;</span><br><span class="line"></span><br><span class="line">    @Autowired</span><br><span class="line">    public void setInstance(OrderService instance) &#123;</span><br><span class="line">        OrderService.instance = instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void createOrder() &#123;</span><br><span class="line">        instance.doCreateOrder(); // 实际调用代理对象的实例方法</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Transactional // 事务注解在实例方法上，生效！</span><br><span class="line">    public void doCreateOrder() &#123;</span><br><span class="line">        // 数据库操作</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>但请注意，这种模式引入了对Spring的依赖，并且有循环依赖的风险，通常不是最佳实践。更好的做法是<strong>避免使用静态方法作为业务入口</strong>。</p>
+<h4 id="3-工具类（Util-Classes）与Spring"><a href="#3-工具类（Util-Classes）与Spring" class="headerlink" title="3. 工具类（Util Classes）与Spring"></a>3. 工具类（Util Classes）与Spring</h4><p>工具类通常是<code>static</code>方法的重灾区。在Spring项目中，你需要决定这个工具类是否需要Spring管理的资源（如数据库连接、其他Bean）。</p>
+<ul>
+<li><p><strong>纯工具类</strong>：如果方法只是进行数学计算、字符串操作等，不依赖任何Spring Bean，那么做成静态方法是完全没问题的。例如 <code>StringUtils</code>, <code>DateUtils</code>。</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public final class MyStringUtils &#123; // 注意：final防止被继承，私有构造防止被实例化</span><br><span class="line">    private MyStringUtils() &#123;&#125;</span><br><span class="line">    </span><br><span class="line">    public static boolean isBlank(String str) &#123; ... &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>需要Spring资源的”工具类”</strong>：如果需要访问数据库、配置文件等，它就不再是一个纯粹的工具类。这时应该将其定义为一个<strong>普通的Spring Bean（<code>@Component</code>）</strong>，并使用实例方法。然后你可以通过依赖注入在任何需要的地方使用它。</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class ConfigService &#123;</span><br><span class="line">    @Value(&quot;$&#123;app.config.value&#125;&quot;)</span><br><span class="line">    private String configValue;</span><br><span class="line">    </span><br><span class="line">    public String getConfig() &#123; // 实例方法</span><br><span class="line">        return configValue;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Service</span><br><span class="line">public class AnotherService &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private ConfigService configService; // 正确注入</span><br><span class="line">    </span><br><span class="line">    public void someMethod() &#123;</span><br><span class="line">        String config = configService.getConfig();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="4-常量（Constants）"><a href="#4-常量（Constants）" class="headerlink" title="4. 常量（Constants）"></a>4. 常量（Constants）</h4><p>使用<code>public static final</code>定义常量是完全安全且推荐的。</p>
+<p>java</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Component</span><br><span class="line">public class AppConstants &#123;</span><br><span class="line">    public static final String API_VERSION = &quot;v1&quot;;</span><br><span class="line">    public static final int MAX_PAGE_SIZE = 100;</span><br><span class="line">    </span><br><span class="line">    // 如果需要从配置文件注入值，则不能是final，需要通过setter</span><br><span class="line">    private static String injectedConstant;</span><br><span class="line">    </span><br><span class="line">    @Value(&quot;$&#123;app.some.constant&#125;&quot;)</span><br><span class="line">    public void setInjectedConstant(String value) &#123;</span><br><span class="line">        injectedConstant = value;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public static String getInjectedConstant() &#123;</span><br><span class="line">        return injectedConstant;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<hr>
+<h3 id="三、最佳实践总结"><a href="#三、最佳实践总结" class="headerlink" title="三、最佳实践总结"></a>三、最佳实践总结</h3><ol>
+<li><strong>首选实例方法和依赖注入</strong>：这是Spring的哲学。在绝大多数业务逻辑场景下，都应该使用实例Bean和依赖注入。</li>
+<li><strong>避免在静态方法中使用AOP注解</strong>：如<code>@Transactional</code>, <code>@Cacheable</code>, <code>@Async</code>等。它们会失效。</li>
+<li><strong>谨慎使用静态字段持有Bean引用</strong>：如果必须这么做，确保是单例且注意初始化顺序（使用<code>@PostConstruct</code>或Setter）。</li>
+<li><strong>区分纯工具类和Spring增强类</strong>：<ul>
+<li>无状态、不依赖外部资源的工具 → <code>static</code>方法。</li>
+<li>需要Spring管理资源（数据库、配置、其他Bean）的类 → <code>@Component</code> + 实例方法。</li>
+</ul>
+</li>
+<li><strong>常量放心用<code>static final</code></strong>：这是<code>static</code>最安全、最推荐的使用场景之一。</li>
+<li><strong>测试考虑</strong>：静态方法难以被Mock，会使单元测试变得复杂。基于实例和接口的代码更容易测试。</li>
+</ol>
+<p><strong>核心思想</strong>：在Spring世界中，请将<code>static</code>视为一个需要特别理由才能使用的”特权”，而不是默认选择。让你的代码充分享受Spring IoC容器带来的便利和强大功能，而不是与之对抗。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://xiongchaoyong.github.io">朝永</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://xiongchaoyong.github.io/posts/c2a288e.html">https://xiongchaoyong.github.io/posts/c2a288e.html</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://xiongchaoyong.github.io" target="_blank">朝永的博客</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%A4%B4%E8%84%91%E9%A3%8E%E6%9A%B4/">头脑风暴</a><a class="post-meta__tags" href="/tags/%E6%80%9D%E8%80%83/">思考</a></div><div class="post-share"><div class="social-share" data-image="/img/5.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/posts/4436c201.html" title="拓展第三方登录"><img class="cover" src="/img/5.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">拓展第三方登录</div></div><div class="info-2"><div class="info-item-1">拓展第三方登录这是一个非常好的设计问题！你的想法非常正确，使用接口 + 多个实现类是处理多平台登录的经典设计模式。我来详细解释为什么要这样设计，并给出具体实现示例。 为什么要使用接口 + 实现类？1. 符合开闭原则（OCP） 对扩展开放：新增登录方式（如微信、谷歌）时，只需新增实现类，不用修改现有代码 对修改关闭：已有的登录逻辑不会被意外破坏  2. 统一处理，简化调用12345// 调用方不需要关心具体是哪个平台public String login(String type, String authData) &#123;    LoginStrategy strategy = loginStrategyFactory.getStrategy(type);    return strategy.login(authData);&#125;  3. 易于测试和维护每个平台的登录逻辑相互隔离，可以独立测试和修改  具体实现示例1. 定义登录接口1234567891011121314151617181920212223242526272829303132333435363738394...</div></div></div></a><a class="pagination-related" href="/posts/72d93c66.html" title="请求方式总结"><img class="cover" src="/img/5.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">请求方式总结</div></div><div class="info-2"><div class="info-item-1">非常棒 👍，这个问题很关键！要彻底弄懂前后端交互，必须清楚：  前端有哪些请求方式（method） 每种请求的参数怎么传递（path、query、body、header） 在前端（如 axios、fetch、Form）和后端（Spring）如何接收  下面我帮你系统总结成一份「前端请求方式与参数传递大全」👇  🚀 一、HTTP 常见请求方式（method）   请求方式 主要用途 是否有请求体（body） 是否幂等 典型场景    GET 获取数据 ❌ 无 ✅ 是 获取列表、详情   POST 创建数据 ✅ 有 ❌ 否 新增、登录、上传   PUT 更新整体数据 ✅ 有 ✅ 是 修改整条记录   PATCH 更新部分数据 ✅ 有 ✅ 是 局部更新   DELETE 删除数据 ✅ 可有可无 ✅ 是 删除资源    🧩 二、参数传递的四种方式（非常重要）   参数类型 位置 示例 前端写法 后端接收注解    Path 参数 URL 路径中 /users/1 /users/${id} @PathVariable   Query 参数 ? 后面 /users?page=1&am...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/posts/7b25d017.html" title="redis"><img class="cover" src="/img/5.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">redis</div></div><div class="info-2"><div class="info-item-1"> Redis 的“单线程”是什么意思  好的，这是一个非常经典且重要的问题。我们来详细解释一下 Redis 的“单线程”是什么意思，以及它带来的好处和需要注意的地方。 Redis 单线程是什么意思？首先，需要明确一个关键点：我们通常所说的“Redis 是单线程”，指的是其核心的网络 I&#x2F;O 和键值对读写是由一个线程来完成的。 这并不意味着 Redis 在整个软件层面都是单线程的。现代版本的 Redis 在后台会使用一些额外的线程来处理其他任务，例如：  持久化：在生成 RDB 快照或重写 AOF 日志时，会 fork 出子进程来完成（注意，是进程，不是线程）。在 AOF 的 fsync 等某些环节也可能使用线程。 异步删除：当你使用 UNLINK 命令删除一个大键，或者使用 FLUSHDB ASYNC &#x2F; FLUSHALL ASYNC 命令时，实际的内存回收会交给后台线程处理，以避免阻塞主线程。 其他模块任务：一些复杂的模块可能会使用自己的线程。  所以，最准确的理解是：Redis 处理客户端请求的核心模块是单线程的。 这个主线程负责处理所有命令的接收、解析、...</div></div></div></a><a class="pagination-related" href="/posts/df28a7c5.html" title="博客优化"><img class="cover" src="/img/5.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">博客优化</div></div><div class="info-2"><div class="info-item-1">功能登录注册首页分页首页卡片数据文章页面数据、推荐文章（类似hexo）文章评论模块聊天系统模块（在原基础上改进，前后端改进）动态模块AI模块(回顾，输出格式等等)相册模块留言友链热门，找一个api学习的点断点调试一、缓存优化：让博客“读得快”博客最常见的问题是读多写少。Redis 的缓存能显著减少数据库压力。  文章详情缓存当用户打开文章详情页时，优先从 Redis 取文章内容；如果没有，就去数据库查，然后把结果写入缓存。 Key 可以设为：blog:post:{id} 过期时间可设为几分钟或根据访问热度动态调整。 注意实现缓存穿透、击穿、雪崩的防护（实战篇都有讲）。   首页文章列表缓存首页一般展示最新文章或推荐文章。你可以缓存这类列表结果，减少重复查询。 Key：blog:homepage:list 更新策略：文章有新增或删除时主动更新缓存。   分类 &#x2F; 标签页缓存同样地，可以为分类、标签、搜索结果设置缓存。  这部分的收益是立即可见的，加载速度明显提升。  二、统计与热度：让博客“有感觉”Redis 的数据结构特别适合做计数、排行、签到这类功能。  文章阅读量计...</div></div></div></a><a class="pagination-related" href="/posts/6930f7b7.html" title="工具类规范"><img class="cover" src="/img/5.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">工具类规范</div></div><div class="info-2"><div class="info-item-1">我这个只是一个工具类，所以我想用静态方法，但是我需要使用redisTemplate，我有什么办法吗 ChatGPT 说：非常好的问题 👏——这是很多做 Spring Boot 工具类开发时都会遇到的场景。你说得没错：工具类确实更适合写静态方法，但是你又想使用 RedisTemplate 这种由 Spring 管理的 Bean。  ✅ 问题本质Spring 的 @Autowired 只会注入到 被 Spring 容器托管的对象的实例字段。静态方法属于类本身（不是对象），所以它不受 Spring 容器管理，无法直接注入依赖。  ✅ 正确解决方案：使用 “静态 setter 注入”这种方式最常用、最安全。 123456789101112131415161718192021222324252627282930313233343536373839404142@Componentpublic class ScrollUtil &#123;    private static RedisTemplate&lt;String, Object&gt; redisTemplate;    @Aut...</div></div></div></a><a class="pagination-related" href="/posts/72d93c66.html" title="请求方式总结"><img class="cover" src="/img/5.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">请求方式总结</div></div><div class="info-2"><div class="info-item-1">非常棒 👍，这个问题很关键！要彻底弄懂前后端交互，必须清楚：  前端有哪些请求方式（method） 每种请求的参数怎么传递（path、query、body、header） 在前端（如 axios、fetch、Form）和后端（Spring）如何接收  下面我帮你系统总结成一份「前端请求方式与参数传递大全」👇  🚀 一、HTTP 常见请求方式（method）   请求方式 主要用途 是否有请求体（body） 是否幂等 典型场景    GET 获取数据 ❌ 无 ✅ 是 获取列表、详情   POST 创建数据 ✅ 有 ❌ 否 新增、登录、上传   PUT 更新整体数据 ✅ 有 ✅ 是 修改整条记录   PATCH 更新部分数据 ✅ 有 ✅ 是 局部更新   DELETE 删除数据 ✅ 可有可无 ✅ 是 删除资源    🧩 二、参数传递的四种方式（非常重要）   参数类型 位置 示例 前端写法 后端接收注解    Path 参数 URL 路径中 /users/1 /users/${id} @PathVariable   Query 参数 ? 后面 /users?page=1&am...</div></div></div></a><a class="pagination-related" href="/posts/4436c201.html" title="拓展第三方登录"><img class="cover" src="/img/5.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">拓展第三方登录</div></div><div class="info-2"><div class="info-item-1">拓展第三方登录这是一个非常好的设计问题！你的想法非常正确，使用接口 + 多个实现类是处理多平台登录的经典设计模式。我来详细解释为什么要这样设计，并给出具体实现示例。 为什么要使用接口 + 实现类？1. 符合开闭原则（OCP） 对扩展开放：新增登录方式（如微信、谷歌）时，只需新增实现类，不用修改现有代码 对修改关闭：已有的登录逻辑不会被意外破坏  2. 统一处理，简化调用12345// 调用方不需要关心具体是哪个平台public String login(String type, String authData) &#123;    LoginStrategy strategy = loginStrategyFactory.getStrategy(type);    return strategy.login(authData);&#125;  3. 易于测试和维护每个平台的登录逻辑相互隔离，可以独立测试和修改  具体实现示例1. 定义登录接口1234567891011121314151617181920212223242526272829303132333435363738394...</div></div></div></a><a class="pagination-related" href="/posts/8f1a8d8f.html" title="自动注入原理解析"><img class="cover" src="/img/5.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2025-10-20</div><div class="info-item-2">自动注入原理解析</div></div><div class="info-2"><div class="info-item-1">非常好，这个问题其实非常经典，很多人第一次用 Spring Boot 配置 @Value 注入都会遇到同样的坑。我们来逐步解释清楚为什么 你现在的写法值注入不进去，并给出正确解决方案。  🧩 你的现状你现在的类里这样写： 12345@Value(&quot;$&#123;github.clientId&#125;&quot;)private static String clientId;@Value(&quot;$&#123;github.clientSecret&#125;&quot;)private static String clientSecret;  并且你的配置文件（application.yml）是这样： 123github:  clientId: Ov23liekxBjOJPcC1piu  clientSecret: da401a41e17faa275357425e5d175c5f0f92794e   ❌ 为什么不生效核心原因：Spring 不能注入 static 字段Spring 的依赖注入机制（无论是 @Autowired 还是 @Value）都是基于 实例...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/qq%E5%A4%B4%E5%83%8F.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">朝永</div><div class="author-info-description">一个记录代码与思考的地方</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">15</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">7</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">4</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#static"><span class="toc-number">1.</span> <span class="toc-text">static</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E8%AE%BE%E8%AE%A1-static%EF%BC%9F"><span class="toc-number">1.0.1.</span> <span class="toc-text">一、为什么要设计 static？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81static-%E5%8F%AF%E4%BB%A5%E4%BF%AE%E9%A5%B0%E4%BB%80%E4%B9%88%EF%BC%9F%E6%80%8E%E4%B9%88%E8%BF%90%E7%94%A8%EF%BC%9F"><span class="toc-number">1.0.2.</span> <span class="toc-text">二、static 可以修饰什么？怎么运用？</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F%EF%BC%88%E7%B1%BB%E5%8F%98%E9%87%8F%EF%BC%89"><span class="toc-number">1.0.2.1.</span> <span class="toc-text">1. 静态变量（类变量）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%EF%BC%88%E7%B1%BB%E6%96%B9%E6%B3%95%EF%BC%89"><span class="toc-number">1.0.2.2.</span> <span class="toc-text">2. 静态方法（类方法）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E9%9D%99%E6%80%81%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="toc-number">1.0.2.3.</span> <span class="toc-text">3. 静态代码块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E9%9D%99%E6%80%81%E5%86%85%E9%83%A8%E7%B1%BB"><span class="toc-number">1.0.2.4.</span> <span class="toc-text">4. 静态内部类</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%BF%90%E7%94%A8-static-%E9%9C%80%E8%A6%81%E6%B3%A8%E6%84%8F%E4%BB%80%E4%B9%88%EF%BC%9F%EF%BC%88%E9%99%B7%E9%98%B1%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%EF%BC%89"><span class="toc-number">1.0.3.</span> <span class="toc-text">三、运用 static 需要注意什么？（陷阱与最佳实践）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.0.4.</span> <span class="toc-text">总结</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%A0%B8%E5%BF%83%E5%8E%9F%E5%88%99%EF%BC%9ASpring-IoC%E5%AE%B9%E5%99%A8%E7%AE%A1%E4%B8%8D%E4%BA%86%E2%80%9DStatic%E2%80%9D"><span class="toc-number">1.0.5.</span> <span class="toc-text">一、核心原则：Spring IoC容器管不了”Static”</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%85%B7%E4%BD%93%E5%9C%BA%E6%99%AF%E4%B8%8E%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="toc-number">1.0.6.</span> <span class="toc-text">二、具体场景与注意事项</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-%E9%9D%99%E6%80%81%E5%AD%97%E6%AE%B5%E4%B8%8E%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5"><span class="toc-number">1.0.6.1.</span> <span class="toc-text">1. 静态字段与依赖注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-%E9%9D%99%E6%80%81%E6%96%B9%E6%B3%95%E4%B8%8EAOP%EF%BC%88%E5%A6%82-Transactional%EF%BC%89"><span class="toc-number">1.0.6.2.</span> <span class="toc-text">2. 静态方法与AOP（如@Transactional）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3-%E5%B7%A5%E5%85%B7%E7%B1%BB%EF%BC%88Util-Classes%EF%BC%89%E4%B8%8ESpring"><span class="toc-number">1.0.6.3.</span> <span class="toc-text">3. 工具类（Util Classes）与Spring</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-%E5%B8%B8%E9%87%8F%EF%BC%88Constants%EF%BC%89"><span class="toc-number">1.0.6.4.</span> <span class="toc-text">4. 常量（Constants）</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="toc-number">1.0.7.</span> <span class="toc-text">三、最佳实践总结</span></a></li></ol></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/posts/7b25d017.html" title="redis"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="redis"/></a><div class="content"><a class="title" href="/posts/7b25d017.html" title="redis">redis</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/df28a7c5.html" title="博客优化"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="博客优化"/></a><div class="content"><a class="title" href="/posts/df28a7c5.html" title="博客优化">博客优化</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/6930f7b7.html" title="工具类规范"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="工具类规范"/></a><div class="content"><a class="title" href="/posts/6930f7b7.html" title="工具类规范">工具类规范</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/72d93c66.html" title="请求方式总结"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="请求方式总结"/></a><div class="content"><a class="title" href="/posts/72d93c66.html" title="请求方式总结">请求方式总结</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/posts/c2a288e.html" title="static深入理解"><img src="/img/5.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="static深入理解"/></a><div class="content"><a class="title" href="/posts/c2a288e.html" title="static深入理解">static深入理解</a><time datetime="2025-10-20T06:55:00.000Z" title="发表于 2025-10-20 14:55:00">2025-10-20</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 By 朝永</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 8.0.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.1</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.1"></script><script src="/js/main.js?v=5.5.1"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
